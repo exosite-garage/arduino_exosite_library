@@ -32,9 +32,11 @@
 
 #define serverName "m2.exosite.com"
 
-/*
- * Constructor
- */
+/*==============================================================================
+* Exosite
+*
+* constructor for Exosite class
+*=============================================================================*/
 Exosite::Exosite(EthernetClass *eth, byte* _mac, String _cik)
 {  
   ethernet = eth;
@@ -42,6 +44,11 @@ Exosite::Exosite(EthernetClass *eth, byte* _mac, String _cik)
   cik = _cik;
 }
 
+/*==============================================================================
+* init 
+*
+* initialization function for Exosite class. 
+*=============================================================================*/
 void Exosite::init(void)
 {
   ethernet->begin(mac);
@@ -49,9 +56,11 @@ void Exosite::init(void)
   this->client = new EthernetClient();
 }
 
-/*
- * Send data to Cloud
- */
+/*==============================================================================
+* sendToCloud 
+*
+* send data to cloud 
+*=============================================================================*/
 int Exosite::sendToCloud(String res, int value) 
 {
  
@@ -110,9 +119,11 @@ int Exosite::sendToCloud(String res, int value)
   return ret;
 }
 
-/*
- * read data from cloud
- */
+/*==============================================================================
+* readFromCloud 
+*
+* read data from cloud 
+*=============================================================================*/
 int Exosite::readFromCloud(String res ,String* pResult) 
 {
  

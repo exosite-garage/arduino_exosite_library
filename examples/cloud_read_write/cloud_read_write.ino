@@ -29,22 +29,32 @@
 #include <Ethernet.h>
 #include <Exosite.h>
 
+//global variables
 byte macData[] = { "PUTYOURMACHERE"  }; // <-- Fill in your MAC here! (e.g. {0x90, 0xA2, 0xDA, 0x00, 0x22, 0x33}) 
 
 String cikData = "PUTYOURCIKHERE";      // <-- Fill in your CIK here! (https://portals.exosite.com -> Add Device)
 
 Exosite exosite(&Ethernet, macData, cikData);
 
+/*==============================================================================
+* setup
+*
+* Arduino setup function.
+*=============================================================================*/
 void setup()
 {
   exosite.init();
 }
 
+/*==============================================================================
+* loop 
+*
+* Arduino loop function.
+*=============================================================================*/
 void loop()
 {
 
   String retVal;
-
 
   //Read the alias (resource name) "onoff"
   if ( exosite.readFromCloud("onoff", &retVal)) 
