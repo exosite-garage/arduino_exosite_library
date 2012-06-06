@@ -2,7 +2,7 @@
 ========================================
 About Exosite Arduino Library
 ========================================
-This project is an simple example of using an Andruino board equip with Ethernet Shield to send and receive data to/from the cloud by using Exosite's Cloud Data Platform.  This example cloud_read_write read a data from the cloud, add 100 to it and send back to the cloud. 
+This project is an simple example of using an Arduino board equipped with Ethernet Shield to send and receive data to/from the cloud by using Exosite's Cloud Data Platform.  The example cloud_read_write code reads data from the cloud, adds 100 to it and sends it back to the cloud. 
 
 License is BSD, Copyright 2012, Exosite LLC (see LICENSE file)
 
@@ -15,25 +15,25 @@ Quick Start
 
  * http://www.arduino.cc/en/Main/software
 
-2) Go to "Sketch->Show Sketch Folder", your Sketch folder will then be displayed. Create a directory name "libraries" if it is not exists".
+2) Go to "Sketch->Show Sketch Folder", your Sketch folder will then be displayed. Create a directory named "libraries" if it does not exist.
 
-3) Copy the Exosite library folder to the directory sketchbook-location\"libraries". Then you should see "File->Examples->Exosite"
+3) Copy the Exosite library folder to the directory sketchbook-location\"libraries". You should then see "File->Examples->Exosite"
 
-4) Open the "File->Examples->Exosite->cloud_read_write"
+4) Open "File->Examples->Exosite->cloud_read_write"
 
-5) Edit the "PUTYOURCIKHERE" value to match your CIK value
+5) Edit the "PUTYOURCIKHERE" value in cloud.cpp to match your CIK value
 
-  * HINT: Obtain a CIK from https://portals.exosite.com by clicking +Add Device
+  * HINT: Obtain a CIK by signing up for a free account at https://portals.exosite.com. After activating your account, login and navigate to https://portals.exosite.com/manage/devices and click the +Add Device link
 
-6) Edit the mac address values if you have valid set of mac addres, or you can just use the default value for testing.
+6) Edit the MAC address values in cloud.cpp if you have a valid MAC address, or you can just use the default value for testing purposes
 
-7) In Portals (https://portals.exosite.com), add two DataSources to match the data resources (aliases) the code is using.
+7) In Portals (https://portals.exosite.com), add two Data Sources to match the data resources (aliases) the code is using
 
-  * HINT: Goto https://portals.exosite.com/manage/data and click +Add Data Source
+  * HINT: Go to https://portals.exosite.com/manage/data and click +Add Data Source
 
   * HINT: Ensure the "Resource:" values are set to "1" and "onoff" respectively to match the code
 
-  * HINT: Add an "on off switch" Widget to your dashboard to control data source "onff"
+  * HINT: Add an "On/Off Switch" widget to your dashboard to control data source "onoff"
 
 8) Go to "Tools->Board" to select the corresponding Arduino board type
  
