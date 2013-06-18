@@ -84,7 +84,6 @@ int Exosite::sendToCloud(String res, int value)
       client->print("X-Exosite-CIK: "); 
       client->println(cik);
       client->println("Content-Type: application/x-www-form-urlencoded; charset=utf-8");
-      client->println("Accept: application/xhtml+xml");
       client->print("Content-Length: ");
       client->println(myDataString.length()); //calculate length
       client->println();
