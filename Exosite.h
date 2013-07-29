@@ -32,6 +32,16 @@
 #include <Ethernet.h>
 #include <EthernetClient.h>
 
+struct datapoint{
+    char* alias;
+    char* value;
+};
+
+struct exoreply{
+    size_t count;
+    datapoint* data;
+};
+
 class Exosite
 {
   private:
@@ -39,8 +49,12 @@ class Exosite
     class EthernetClass* ethernet;
     byte *mac;
     String cik;
-    char rxdata[150];
-    int ret;
+    char rxdata[200];
+    char dataList[100];
+    char aliasList[50];
+    char* varPtr;
+    char* varPtr2;
+    boolean ret;
     int stringPos;
     boolean DataRx;
     boolean RxLoop;
@@ -48,7 +62,6 @@ class Exosite
     unsigned long timeout_time;
     unsigned long time_now;
     unsigned long timeout;
-    String myDataString;
 
 
   public:
@@ -56,6 +69,7 @@ class Exosite
     void init(void);
     int sendToCloud(String res, int value);
     int readFromCloud(String res ,String* pResult);
+    boolean readWrite(char* writeAliases[], char* writeValues[], int& writeCount, char* readAliases[], char* readValues[], int&  readCount);
 
 };
 

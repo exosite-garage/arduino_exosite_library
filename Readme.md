@@ -54,3 +54,8 @@ Release Info
 ========================================
 **Release 2011-06-05**
  - initial version
+
+**Release 2013-07-29**
+ - Major rewrite to both read and write multiple datasources in one HTTP call.
+ - Removed all use of Strings due to stability issues (except for manipulating string object passed to existing functions).
+ - Existing `sendToCloud()` and `readFromCloud()` changed to use new call internally. External Interface Unchanged
