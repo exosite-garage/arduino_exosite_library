@@ -2,11 +2,11 @@
 ========================================
 About Exosite Arduino Library
 ========================================
-This project is an simple example of using an Arduino board equipped with Ethernet Shield to send and receive data to/from the cloud by using Exosite's Cloud Data Platform.  The example cloud_read_write code reads data from the cloud, adds 100 to it and sends it back to the cloud. 
+This project is a simple example of using an Arduino board equipped with Ethernet Shield to send and receive data to/from the cloud by using Exosite's Cloud Data Platform.  The example cloud_read_write code reads data from the cloud, adds 100 to it and sends it back to the cloud. 
 
-License is BSD, Copyright 2012, Exosite LLC (see LICENSE file)
+License is BSD, Copyright 2013, Exosite LLC (see LICENSE file)
 
-Tested with Arduino 1.01
+Tested with Arduino 1.0.1
 
 ========================================
 Quick Start
