@@ -165,7 +165,6 @@ boolean Exosite::readWrite(char* writeAliases[], char* writeValues[], int& write
     }
   }
 
-  delay(2000);
   if (client->connect(serverName,80)) {
       if (client->connected()) {
       // Send request using Exosite basic HTTP API
