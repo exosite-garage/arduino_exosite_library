@@ -79,6 +79,7 @@ int Exosite::sendToCloud(String res, int value){
   }
 
   res.toCharArray(writeAliases[0], 32);
+  itoa(value, writeValues[0], 10);
 
   if(this->readWrite(writeAliases, writeValues, writeCount, readAliases, readValues, readCount)){
     free(writeAliases[0]);
