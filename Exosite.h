@@ -45,7 +45,7 @@ struct exoreply{
 class Exosite
 {
   private:
-    class EthernetClient* client; // Port 80 is default for HTTP
+    class Client* client;
     class EthernetClass* ethernet;
     byte *mac;
     String cik;
@@ -65,8 +65,7 @@ class Exosite
 
 
   public:
-    Exosite(EthernetClass *eth, byte* _mac, String _cik);  //constructor
-    void init(void);
+    Exosite(String _cik, Client *_client);  //constructor
     int sendToCloud(String res, int value);
     int readFromCloud(String res ,String* pResult);
     boolean readWrite(char* writeAliases[], char* writeValues[], int& writeCount, char* readAliases[], char* readValues[], int&  readCount);

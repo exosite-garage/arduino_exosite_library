@@ -37,23 +37,10 @@
 *
 * constructor for Exosite class
 *=============================================================================*/
-Exosite::Exosite(EthernetClass *eth, byte* _mac, String _cik)
-{  
-  ethernet = eth;
-  mac = _mac;
-  cik = _cik;
-}
-
-/*==============================================================================
-* init 
-*
-* initialization function for Exosite class. 
-*=============================================================================*/
-void Exosite::init(void)
+Exosite::Exosite(String _cik, Client *_client)
 {
-  ethernet->begin(mac);
-  delay(500);
-  this->client = new EthernetClient();
+  cik = _cik;
+  client = _client;
 }
 
 /*==============================================================================

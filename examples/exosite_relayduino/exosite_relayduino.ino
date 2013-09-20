@@ -57,6 +57,7 @@ int Analogs[3] = {ANIN1, ANIN2, ANIN3};
 #define REL8 9  // Relay 8 is connected to Arduino Digital 9 PWM
 int Relays[8] = {REL1, REL2, REL3, REL4, REL5, REL6, REL7, REL8};
 int PWMAble[4] = {2, 4, 5, 8};
+
 #define OI1 15 // Opto-Isolated Input 1 is connected to Arduino Analog 1 which is Digital 15
 #define OI2 16 // Opto-Isolated Input 2 is connected to Arduino Analog 2 which is Digital 16
 #define OI3 17 // Opto-Isolated Input 3 is connected to Arduino Analog 3 which is Digital 17
@@ -65,7 +66,8 @@ int Optos[4] = {OI1, OI2, OI3, OI4};
 
 //global variables    
 
-Exosite exosite(&Ethernet, macData, cikData);
+class EthernetClient client;
+Exosite exosite(cikData, &client);
 
 int readValueCount;
 int writeValueCount;
@@ -74,8 +76,8 @@ unsigned long last_millis = 0;
 
 char* readAliases[8];
 char* readValues[8];
-char* writeAliases[7];
-char* writeValues[7];
+char* writeAliases[8];
+char* writeValues[8];
 
 char* varPtr = NULL;
 
@@ -88,7 +90,9 @@ void setup()
 {
   Serial.begin(115200);
   Serial.println(F("Boot"));
-  exosite.init();
+
+  Ethernet.begin(macData);
+  delay(1000);
 
   pinMode( 2, OUTPUT);
   pinMode( 3, OUTPUT);
@@ -163,4 +167,3 @@ void loop()
   
   last_millis += loop_interval_ms; // This is an unsigned long, it should overflow just the same as millis().
 }
-

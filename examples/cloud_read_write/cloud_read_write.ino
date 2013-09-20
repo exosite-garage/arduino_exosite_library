@@ -34,7 +34,8 @@ byte macData[] = { "PUTYOURMACHERE"  }; // <-- Fill in your MAC here! (e.g. {0x9
 
 String cikData = "PUTYOURCIKHERE";      // <-- Fill in your CIK here! (https://portals.exosite.com -> Add Device)
 
-Exosite exosite(&Ethernet, macData, cikData);
+class EthernetClient client;
+Exosite exosite(cikData, &client);
 
 /*==============================================================================
 * setup
@@ -43,7 +44,8 @@ Exosite exosite(&Ethernet, macData, cikData);
 *=============================================================================*/
 void setup()
 {
-  exosite.init();
+  Ethernet.begin(macData);
+  delay(1000);
 }
 
 /*==============================================================================
