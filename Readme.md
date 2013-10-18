@@ -8,18 +8,27 @@ License is BSD, Copyright 2013, Exosite LLC (see LICENSE file)
 
 Tested with Arduino 1.0.5
 
+Migration from V1
+=================
+Version 2 no longer sets up the etherent shield for you. In your code you'll need to replace `Exosite exosite(&Ethernet, macData, cikData);` with 
+
+```
+class EthernetClient client;
+Exosite exosite(cikData, &client);
+```
+You will also need to remove `exosite.init();` and add `Ethernet.begin(macData);` to your setup() function.
 
 Release Info
 ============
-**Release 2011-06-05**
- - initial version
+**v2.0 - Release 2013-10-18**
+ - Simplified interface to use character strings or Arduino Strings instead of arrays of character arrays. User must now URL encode and decode their own data.
+ - Made compatible with Arduino WiFi shield (and anything that similarly subclasses the Client class).
+ - Updated examples to use new interface.
 
-**Release 2013-07-29**
+**v1.1 - Release 2013-07-29**
  - Major rewrite to both read and write multiple datasources in one HTTP call.
  - Removed all use of Strings due to stability issues (except for manipulating string object passed to existing functions).
  - Existing `sendToCloud()` and `readFromCloud()` changed to use new call internally. External Interface Unchanged
 
-**Release 2013-10-18**
- - Simplified interface to use character strings or Arduino Strings instead of arrays of character arrays. User must now URL encode and decode their own data.
- - Made compatible with Arduino WiFi shield (and anything that similarly subclasses the Client class).
- - Updated examples to use new interface.
+**v1.0 - Release 2011-06-05**
+ - initial version
