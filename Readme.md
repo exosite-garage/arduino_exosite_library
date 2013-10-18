@@ -1,56 +1,51 @@
+About the Exosite Arduino Library
+=================================
+This library allows you to quickly and easily connect your Arduino project to Exosite's Data Platform in the cloud. It connects your project using an Arduino Ethernet shield, Arduino WiFi Shield, or any other networking shield that subclasses the Client class. See the examples folder for both an Ethernet and a WiFi example.
 
-========================================
-About Exosite Arduino Library
-========================================
-This project is an simple example of using an Arduino board equipped with Ethernet Shield to send and receive data to/from the cloud by using Exosite's Cloud Data Platform.  The example cloud_read_write code reads data from the cloud, adds 100 to it and sends it back to the cloud. 
+Note: A free account on exosite portals is required: https://portals.exosite.com
 
-License is BSD, Copyright 2012, Exosite LLC (see LICENSE file)
+License is BSD, Copyright 2013, Exosite LLC (see LICENSE file)
 
-Tested with Arduino 1.01
+Tested with Arduino 1.0.5
 
-========================================
-Quick Start
-========================================
-1) Download the Arduino toolchain and development environment
+Interface
+=========
+```c
+boolean Exosite::readWrite(char* readString, char* writeString, char** returnString)
+```
 
- * http://www.arduino.cc/en/Main/software
+```c
+boolean Exosite::readWrite(String readString, String writeString, String &returnString)
+```
 
-2) Go to "Sketch->Show Sketch Folder", your Sketch folder will then be displayed. Create a directory named "libraries" if it does not exist.
+`readString`: This selects which datasources to read by their alias. eg. "alias1&alias2"
 
-3) Copy the Exosite library folder to the directory sketchbook-location\"libraries". You should then see "File->Examples->Exosite"
+`writeString`: This sets the values to write to certain datasources. eg. "alias3=value3&alias4=value4"
 
-4) Open "File->Examples->Exosite->cloud_read_write"
+`returnstring`: This is the string returned with the values requested in `readString`. eg. "alias1=value1&alias2=value2"
 
-5) Edit the "PUTYOURCIKHERE" value in cloud.cpp to match your CIK value
 
-  * HINT: Obtain a CIK by signing up for a free account at https://portals.exosite.com. After activating your account, login and navigate to https://portals.exosite.com/manage/devices and click the +Add Device link
+Migration from V1
+=================
+Version 2 no longer sets up the etherent shield for you. In your code you'll need to replace `Exosite exosite(&Ethernet, macData, cikData);` with 
 
-6) Edit the MAC address values in cloud.cpp if you have a valid MAC address, or you can just use the default value for testing purposes
+```
+class EthernetClient client;
+Exosite exosite(cikData, &client);
+```
+You will also need to remove `exosite.init();` and add `Ethernet.begin(macData);` to your setup() function.
 
-7) In Portals (https://portals.exosite.com), add two Data Sources to match the data resources (aliases) the code is using
-
-  * HINT: Go to https://portals.exosite.com/manage/data and click +Add Data Source
-
-  * HINT: Ensure the "Resource:" values are set to "1" and "onoff" respectively to match the code
-
-  * HINT: Add an "On/Off Switch" widget to your dashboard to control data source "onoff"
-
-8) Go to "Tools->Board" to select the corresponding Arduino board type
- 
-9) In the Arduino software, compile and verify there are no errors
-
-10) Go to "Tools->Serial" to select the serial port your Arduino board is connected to
-
-11) Go to File->Upload to I/O Board to upload the program
-
-12) When "Done uploading" is displayed, go to https://portals.exosite.com to see your data in the cloud!
-
-  * HINT: Your Arduino board must be connected to the Internet via the RJ-45 ethernet jack
-
-For more information on this project and other examples, checkout our Exosite Garage github page at http://exosite-garage.github.com
-
-========================================
 Release Info
-========================================
-**Release 2011-06-05**
+============
+**v2.0 - Release 2013-10-18**
+ - Simplified interface to use character strings or Arduino Strings instead of arrays of character arrays. User must now URL encode and decode their own data.
+ - Made compatible with Arduino WiFi shield (and anything that similarly subclasses the Client class).
+ - Updated examples to use new interface.
+
+**v1.1 - Release 2013-07-29**
+ - Major rewrite to both read and write multiple datasources in one HTTP call.
+ - Removed all use of Strings due to stability issues (except for manipulating string object passed to existing functions).
+ - Existing `sendToCloud()` and `readFromCloud()` changed to use new call internally. External Interface Unchanged
+
+**v1.0 - Release 2011-06-05**
  - initial version

@@ -29,18 +29,18 @@
 #define Exosite_h
 
 #include <SPI.h>
-#include <Ethernet.h>
-#include <EthernetClient.h>
+#include <Client.h>
 
 class Exosite
 {
   private:
-    class EthernetClient* client; // Port 80 is default for HTTP
-    class EthernetClass* ethernet;
-    byte *mac;
+    class Client* client;
     String cik;
-    char rxdata[150];
-    int ret;
+    char rxdata[200];
+    char aliasList[50];
+    char* varPtr;
+    char* varPtr2;
+    boolean ret;
     int stringPos;
     boolean DataRx;
     boolean RxLoop;
@@ -48,14 +48,15 @@ class Exosite
     unsigned long timeout_time;
     unsigned long time_now;
     unsigned long timeout;
-    String myDataString;
 
 
   public:
-    Exosite(EthernetClass *eth, byte* _mac, String _cik);  //constructor
-    void init(void);
+    Exosite(String _cik, Client *_client);  //constructor
+    int sendToCloud(String res, String value);
     int sendToCloud(String res, int value);
     int readFromCloud(String res ,String* pResult);
+    boolean readWrite(char* writeString, char* readString, char** returnString);
+    boolean readWrite(String writeString, String readString, String &returnString);
 
 };
 
