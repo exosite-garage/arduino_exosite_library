@@ -88,9 +88,6 @@ boolean Exosite::readWrite(char* readString, char* writeString, char** returnStr
         if (DataRx) {
           DataRx = false;
           RxLoop = false;
-          size_t length = 0;
-          size_t subStringLength = 0;
-          int i = 0;
           //Serial.println("HTTP Response:");
           //Serial.println(rxdata);
           if (strstr(rxdata, "HTTP/1.1 200 OK")) {
