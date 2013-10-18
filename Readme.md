@@ -27,7 +27,7 @@ boolean Exosite::readWrite(String readString, String writeString, String &return
 
 Migration from V1
 =================
-Version 2 no longer sets up the etherent shield for you. In your code you'll need to replace `Exosite exosite(&Ethernet, macData, cikData);` with 
+Version 2 no longer sets up the ethernet shield for you. In your code you'll need to replace `Exosite exosite(&Ethernet, macData, cikData);` with 
 
 ```
 class EthernetClient client;
