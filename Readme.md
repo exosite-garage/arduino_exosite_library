@@ -18,6 +18,11 @@ boolean Exosite::readWrite(char* readString, char* writeString, char** returnStr
 boolean Exosite::readWrite(String readString, String writeString, String &returnString)
 ```
 
+`readString`: This selects which datasources to read by their alias. eg. "alias1&alias2"
+`writeString`: This sets the values to write to certain datasources. eg. "alias3=value3&alias4=value4"
+`returnstring`: This is the string returned with the values requested in `readString`. eg. "alias1=value1&alias2=value2"
+
+
 Migration from V1
 =================
 Version 2 no longer sets up the etherent shield for you. In your code you'll need to replace `Exosite exosite(&Ethernet, macData, cikData);` with 
