@@ -8,6 +8,16 @@ License is BSD, Copyright 2013, Exosite LLC (see LICENSE file)
 
 Tested with Arduino 1.0.5
 
+Interface
+=========
+```c
+boolean Exosite::readWrite(char* readString, char* writeString, char** returnString)
+```
+
+```c
+boolean Exosite::readWrite(String readString, String writeString, String &returnString)
+```
+
 Migration from V1
 =================
 Version 2 no longer sets up the etherent shield for you. In your code you'll need to replace `Exosite exosite(&Ethernet, macData, cikData);` with 
