@@ -6,48 +6,7 @@ This project is a simple example of using an Arduino board equipped with Etherne
 
 License is BSD, Copyright 2013, Exosite LLC (see LICENSE file)
 
-Tested with Arduino 1.0.1
-
-========================================
-Quick Start
-========================================
-1. Download the Arduino toolchain and development environment
-
-    1. http://www.arduino.cc/en/Main/software
-
-2. Go to "Sketch->Show Sketch Folder", your Sketch folder will then be displayed. Create a directory named "libraries" if it does not exist.
-
-3. Copy the Exosite library folder to the directory sketchbook-location\"libraries". You should then see "File->Examples->Exosite"
-
-4. Open "File->Examples->Exosite->cloud_read_write"
-
-5. Edit the "PUTYOURCIKHERE" value in cloud.cpp to match your CIK value
-
-    1. HINT: Obtain a CIK by signing up for a free account at https://portals.exosite.com. After activating your account, login and navigate to https://portals.exosite.com/manage/devices and click the +Add Device link
-
-6. Edit the MAC address values in cloud.cpp if you have a valid MAC address, or you can just use the default value for testing purposes
-
-7. In Portals (https://portals.exosite.com), add two Data Sources to match the data resources (aliases) the code is using
-
-    1. HINT: Go to https://portals.exosite.com/manage/data and click +Add Data Source
-
-    2. HINT: Ensure the "Resource:" values are set to "1" and "onoff" respectively to match the code
-
-    3. HINT: Add an "On/Off Switch" widget to your dashboard to control data source "onoff"
-
-8. Go to "Tools->Board" to select the corresponding Arduino board type
- 
-9. In the Arduino software, compile and verify there are no errors
-
-10. Go to "Tools->Serial" to select the serial port your Arduino board is connected to
-
-11. Go to File->Upload to I/O Board to upload the program
-
-12. When "Done uploading" is displayed, go to https://portals.exosite.com to see your data in the cloud!
-
-    1. HINT: Your Arduino board must be connected to the Internet via the RJ-45 ethernet jack
-
-For more information on this project and other examples, checkout our Exosite Garage github page at http://exosite-garage.github.com
+Tested with Arduino 1.0.5
 
 ========================================
 Release Info
@@ -59,3 +18,8 @@ Release Info
  - Major rewrite to both read and write multiple datasources in one HTTP call.
  - Removed all use of Strings due to stability issues (except for manipulating string object passed to existing functions).
  - Existing `sendToCloud()` and `readFromCloud()` changed to use new call internally. External Interface Unchanged
+
+**Release 2013-10-18**
+ - Simplified interface to use character strings or Arduino Strings instead of arrays of character arrays. User must now URL encode and decode their own data.
+ - Made compatible with Arduino WiFi shield (and anything that similarly subclasses the Client class).
+ - Updated examples to use new interface.
