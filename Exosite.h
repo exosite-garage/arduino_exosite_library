@@ -29,8 +29,7 @@
 #define Exosite_h
 
 #include <SPI.h>
-#include <Ethernet.h>
-#include <EthernetClient.h>
+#include <Client.h>
 
 struct datapoint{
     char* alias;
@@ -50,7 +49,7 @@ class Exosite
     byte *mac;
     String cik;
     char rxdata[200];
-    char dataList[100];
+    char dataList[100]; //FIXME! Blargh!
     char aliasList[50];
     char* varPtr;
     char* varPtr2;
@@ -66,9 +65,12 @@ class Exosite
 
   public:
     Exosite(String _cik, Client *_client);  //constructor
+    int sendToCloud(String res, String value);
     int sendToCloud(String res, int value);
     int readFromCloud(String res ,String* pResult);
     boolean readWrite(char* writeAliases[], char* writeValues[], int& writeCount, char* readAliases[], char* readValues[], int&  readCount);
+    boolean readWrite(char* writeString, char* readString, char** returnString);
+    boolean readWrite(String writeString, String readString, String &returnString);
 
 };
 

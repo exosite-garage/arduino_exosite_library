@@ -1,8 +1,10 @@
 //*****************************************************************************
 //
-// cloud_read_write.ino - Simple read/write sample for the Exosite Cloud API
+// ethernet_read_write_string - A Simple read/write to the Exosite Cloud API
+//                              for the Arduino Ethernet shield using the
+//                              String library
 //
-// Copyright (c) 2012 Exosite LLC.  All rights reserved.
+// Copyright (c) 2013 Exosite LLC.  All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without 
 // modification, are permitted provided that the following conditions are met:
@@ -29,10 +31,22 @@
 #include <Ethernet.h>
 #include <Exosite.h>
 
-//global variables
-byte macData[] = { "PUTYOURMACHERE"  }; // <-- Fill in your MAC here! (e.g. {0x90, 0xA2, 0xDA, 0x00, 0x22, 0x33}) 
+/*==============================================================================
+* Configuration Variables
+*
+* Change these variables to your own settings.
+*=============================================================================*/
+String cikData = "0000000000000000000000000000000000000000";  // <-- Fill in your CIK here! (https://portals.exosite.com -> Add Device)
+byte macData[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};        // <-- Fill in your Ethernet shield's MAC address here.
 
-String cikData = "PUTYOURCIKHERE";      // <-- Fill in your CIK here! (https://portals.exosite.com -> Add Device)
+// Use these variables to customize what datasources are read and written to.
+String readString = "command&uptime";
+String writeString = "uptime=";
+String returnString;
+
+/*==============================================================================
+* End of Configuration Variables
+*=============================================================================*/
 
 class EthernetClient client;
 Exosite exosite(cikData, &client);
@@ -42,9 +56,13 @@ Exosite exosite(cikData, &client);
 *
 * Arduino setup function.
 *=============================================================================*/
-void setup()
-{
+void setup(){  
+  Serial.begin(115200);
+  Serial.println("Boot");
+  
   Ethernet.begin(macData);
+  
+  // wait 10 seconds for connection:
   delay(1000);
 }
 
@@ -53,17 +71,15 @@ void setup()
 *
 * Arduino loop function.
 *=============================================================================*/
-void loop()
-{
-
-  String retVal;
-
-  //Read the alias (resource name) "onoff"
-  if ( exosite.readFromCloud("onoff", &retVal)) 
-  {
-    //Send a value + 100 to Exosite, use the alias (resource name) "1"
-    exosite.sendToCloud("1", retVal.toInt() + 100);
+void loop(){
+  //Write to "uptime" and read from "uptime" and "command" datasources.
+  if ( exosite.readWrite(writeString+String(millis()), readString, returnString)){
+    Serial.println("OK");
+    Serial.println(returnString);
+  }else{
+    Serial.println("Error");
   }
 
-  delay(3000);
+  delay(5000);
 }
+
