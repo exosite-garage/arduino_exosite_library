@@ -2,7 +2,7 @@ About the Exosite Arduino Library
 =================================
 This library allows you to quickly and easily connect your Arduino project to the cloud. It connects your project using an Arduino Ethernet shield, Arduino WiFi Shield, or any other networking shield that subclasses the Client class to Exosite's Data Platform. See the examples folder for both an Ethernet and a WiFi example.
 
-Note an free account on exosite portals is required: https://portals.exosite.com
+Note: A free account on exosite portals is required: https://portals.exosite.com
 
 License is BSD, Copyright 2013, Exosite LLC (see LICENSE file)
 
