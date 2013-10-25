@@ -126,17 +126,20 @@ boolean Exosite::readWrite(String readString, String writeString, String &return
   readCharString = (char*)malloc(sizeof(char) * readString.length()+1);
   returnCharString = (char*)malloc(sizeof(char) * 32);
 
+  if(writeCharString == 0 || readCharString == 0 || returnCharString == 0){
+    Serial.println(F("Not Enough Ram! Failing!"));
+    while(1);
+  }
+
   writeString.toCharArray(writeCharString, writeString.length()+1);
   readString.toCharArray(readCharString, readString.length()+1);
 
   if(this->readWrite(writeCharString, readCharString, &returnCharString)){
-    free(writeCharString);
-    free(readCharString);
     returnString = returnCharString;
-    free(returnCharString);
-    return 1;
+    ret = true;
   }else{
     Serial.println(F("Error Communicating with Exosite"));
+    ret = false;
   }
   free(writeCharString);
   free(readCharString);
