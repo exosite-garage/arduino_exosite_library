@@ -11,16 +11,16 @@ Tested with Arduino 1.0.5
 Interface
 =========
 ```c
-boolean Exosite::readWrite(char* readString, char* writeString, char** returnString)
+boolean Exosite::readWrite(char* writeString, char* readString, char** returnString)
 ```
 
 ```c
-boolean Exosite::readWrite(String readString, String writeString, String &returnString)
+boolean Exosite::readWrite(String writeString, String readString, String &returnString)
 ```
 
-`readString`: This selects which datasources to read by their alias. eg. "alias1&alias2"
-
 `writeString`: This sets the values to write to certain datasources. eg. "alias3=value3&alias4=value4"
+
+`readString`: This selects which datasources to read by their alias. eg. "alias1&alias2"
 
 `returnstring`: This is the string returned with the values requested in `readString`. eg. "alias1=value1&alias2=value2"
 
