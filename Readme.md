@@ -8,6 +8,19 @@ License is BSD, Copyright 2013, Exosite LLC (see LICENSE file)
 
 Tested with Arduino 1.0.5
 
+Installing
+==========
+The easiest way to install this library is to simply clone this repo straight to your libraries folder.
+
+```
+cd ~/sketchbook/libraries
+git clone https://github.com/exosite-garage/arduino_exosite_library.git Exosite
+```
+
+If you would rather not use the command line or you don't have git installed, click the download button on the right hand side of this page and choose to open the ZIP. Copy the contained folder to your Arduino IDE's libraries folder (inside your sketchbook folder) and Rename it to "Exosite". If you do not know the location of sketchbook folder click on "File->Preferences" in the IDE and you should see it listed.
+
+Note: You will need to restart the Arduino IDE after installing the library.
+
 Interface
 =========
 ```c
