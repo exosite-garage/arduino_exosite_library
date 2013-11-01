@@ -58,6 +58,8 @@ boolean Exosite::writeRead(char* readString, char* writeString, char** returnStr
   varPtr = aliasList;
 
   if (client->connect(serverName,80)) {
+    client->flush();
+
     // Send request using Exosite basic HTTP API
     client->print(F("POST /onep:v1/stack/alias?"));
     client->print(readString);
