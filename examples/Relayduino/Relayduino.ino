@@ -124,7 +124,7 @@ void loop()
   
   Serial.print(F("Connecting to Exosite..."));
 
-  if(exosite.readWrite(writeString, readString, returnString)){
+  if(exosite.writeRead(writeString, readString, returnString)){
     Serial.println(F("Success"));
     for(;;){
       index = returnString.indexOf("=", lastIndex+1);
