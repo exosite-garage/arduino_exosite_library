@@ -50,6 +50,11 @@ You will also need to remove `exosite.init();` and add `Ethernet.begin(macData);
 
 Release Info
 ============
+**v2.1 - Release 2013-11-01**
+ - Changed 'readWrite' to 'writeRead' to reflect parameter order and platform operation order.
+ - Added User-Agent String
+ - Added client->flush() just before sending HTTP packet, just in case we received something random.
+
 **v2.0 - Release 2013-10-18**
  - Simplified interface to use character strings or Arduino Strings instead of arrays of character arrays. User must now URL encode and decode their own data.
  - Made compatible with Arduino WiFi shield (and anything that similarly subclasses the Client class).
