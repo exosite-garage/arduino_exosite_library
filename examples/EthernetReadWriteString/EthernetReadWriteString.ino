@@ -73,7 +73,7 @@ void setup(){
 *=============================================================================*/
 void loop(){
   //Write to "uptime" and read from "uptime" and "command" datasources.
-  if ( exosite.readWrite(writeString+String(millis()), readString, returnString)){
+  if ( exosite.writeRead(writeString+String(millis()), readString, returnString)){
     Serial.println("OK");
     Serial.println(returnString);
   }else{

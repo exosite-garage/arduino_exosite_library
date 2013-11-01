@@ -51,7 +51,14 @@ class Exosite
 
 
   public:
-    Exosite(String _cik, Client *_client);  //constructor
+    // Constructor
+    Exosite(String _cik, Client *_client);
+
+    // Current Methods
+    boolean writeRead(char* writeString, char* readString, char** returnString);
+    boolean writeRead(String writeString, String readString, String &returnString);
+
+    // Depreciated Methods
     int sendToCloud(String res, String value);
     int sendToCloud(String res, int value);
     int readFromCloud(String res ,String* pResult);

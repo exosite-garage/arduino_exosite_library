@@ -42,11 +42,11 @@ Exosite::Exosite(String _cik, Client *_client)
 }
 
 /*==============================================================================
-* readWrite 
+* writeRead
 *
-* One step Read and Write to Cloud
+* One step read and write to Exosite using char arrays.
 *=============================================================================*/
-boolean Exosite::readWrite(char* readString, char* writeString, char** returnString){
+boolean Exosite::writeRead(char* readString, char* writeString, char** returnString){
   ret = false;
   stringPos = 0;
   DataRx= false;
@@ -119,8 +119,12 @@ boolean Exosite::readWrite(char* readString, char* writeString, char** returnStr
   return ret;
 }
 
-
-boolean Exosite::readWrite(String readString, String writeString, String &returnString){
+/*==============================================================================
+* writeRead
+*
+* One step read and write to Exosite using Arduino String objects.
+*=============================================================================*/
+boolean Exosite::writeRead(String readString, String writeString, String &returnString){
   char *writeCharString, *readCharString, *returnCharString;
   writeCharString = (char*)malloc(sizeof(char) * writeString.length()+1);
   readCharString = (char*)malloc(sizeof(char) * readString.length()+1);
@@ -134,7 +138,7 @@ boolean Exosite::readWrite(String readString, String writeString, String &return
   writeString.toCharArray(writeCharString, writeString.length()+1);
   readString.toCharArray(readCharString, readString.length()+1);
 
-  if(this->readWrite(writeCharString, readCharString, &returnCharString)){
+  if(this->writeRead(writeCharString, readCharString, &returnCharString)){
     returnString = returnCharString;
     ret = true;
   }else{
@@ -151,6 +155,15 @@ boolean Exosite::readWrite(String readString, String writeString, String &return
 /*==============================================================================
 * DEPRECIATED METHODS
 *=============================================================================*/
+
+
+boolean Exosite::readWrite(String readString, String writeString, String &returnString){
+  Exosite::writeRead(readString, writeString, returnString);
+}
+
+boolean Exosite::readWrite(char* readString, char* writeString, char** returnString){
+  Exosite::writeRead(readString, writeString, returnString);
+}
 
 /*==============================================================================
 * sendToCloud

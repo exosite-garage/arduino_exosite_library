@@ -24,11 +24,11 @@ Note: You will need to restart the Arduino IDE after installing the library.
 Interface
 =========
 ```c
-boolean Exosite::readWrite(char* writeString, char* readString, char** returnString)
+boolean Exosite::writeRead(char* writeString, char* readString, char** returnString)
 ```
 
 ```c
-boolean Exosite::readWrite(String writeString, String readString, String &returnString)
+boolean Exosite::writeRead(String writeString, String readString, String &returnString)
 ```
 
 `writeString`: This sets the values to write to certain datasources. eg. "alias3=value3&alias4=value4"

@@ -12,11 +12,11 @@ Exosite	KEYWORD1
 # Methods and Functions (KEYWORD2)
 #######################################
 
-init			KEYWORD2
 sendToCloud		KEYWORD2
 readFromCloud	KEYWORD2
 readFromCloud	KEYWORD2
 readWrite		KEYWORD2
+writeRead		KEYWORD2
 
 #######################################
 # Instances (KEYWORD2)
