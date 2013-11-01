@@ -28,7 +28,8 @@
 #include <SPI.h>
 #include "Exosite.h"
 
-#define serverName "m2.exosite.com"
+#define serverName        "m2.exosite.com"
+#define ACTIVATOR_VERSION  F("2.1")
 
 /*==============================================================================
 * Exosite
@@ -62,6 +63,10 @@ boolean Exosite::writeRead(char* readString, char* writeString, char** returnStr
     client->print(readString);
     client->println(F(" HTTP/1.1"));
     client->println(F("Host: m2.exosite.com"));
+    client->print(F("User-Agent: Exosite-Activator/"));
+    client->print(ACTIVATOR_VERSION);
+    client->print(F(" Arduino/"));
+    client->println(ARDUINO);
     client->print(F("X-Exosite-CIK: ")); 
     client->println(cik);
     client->println(F("Accept: application/x-www-form-urlencoded; charset=utf-8"));
