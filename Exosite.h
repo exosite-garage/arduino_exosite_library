@@ -59,11 +59,8 @@ class Exosite
     boolean writeRead(String writeString, String readString, String &returnString);
 
     // Depreciated Methods
-    int sendToCloud(String res, String value);
     int sendToCloud(String res, int value);
     int readFromCloud(String res ,String* pResult);
-    boolean readWrite(char* writeString, char* readString, char** returnString);
-    boolean readWrite(String writeString, String readString, String &returnString);
 
 };
 
