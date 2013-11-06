@@ -83,6 +83,8 @@ void setup() {
   sensors.begin();
   delay(1000);
   Serial.println("Starting Exosite Temp Monitor");
+  Serial.print("OneWire Digital Pin Specified: ");
+  Serial.println(ONEWIRE);
   Ethernet.begin(macData);
   // wait 3 seconds for connection
   delay(3000); 
