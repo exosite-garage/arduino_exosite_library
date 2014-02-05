@@ -27,6 +27,10 @@ Interface
 Constructor
 -----------
 ```c
+Exosite(Client *_client);
+```
+
+```c
 Exosite(char *_cik, Client *_client);
 ```
 
@@ -34,7 +38,7 @@ Exosite(char *_cik, Client *_client);
 Exosite(String _cik, Client *_client);
 ```
 
-`_cik`: This is used to hard code the CIK into the device can either be a `char[]` or a `String` type.
+`_cik`: This is used to hard code the CIK into the device can either be a `char[]` or a `String` type. This parameter can be omitted when using provisioning.
 
 `_client`: This is the interface to what ever network device you're using. Must be a subclass of [`Client`](http://arduino.cc/en/Reference/ClientConstructor) such as: [`EthernetClient`](http://arduino.cc/en/Reference/EthernetClient), [`WiFiClient`](http://arduino.cc/en/Reference/WiFiClient), or [`YunClient`](http://arduino.cc/en/Reference/YunClientConstructor)/
 
@@ -54,6 +58,18 @@ boolean Exosite::writeRead(String writeString, String readString, String &return
 `readString`: This selects which datasources to read by their alias. eg. "alias1&alias2"
 
 `returnstring`: This is the string returned with the values requested in `readString`. eg. "alias1=value1&alias2=value2"
+
+provision
+---------
+```c
+boolean provision(char* vendorString, char* modelString, char* snString);
+```
+
+`vendorString`: The string that identifies the device vendor name.
+
+`modelString`: The string that identifies the device unique model ID.
+
+`snString`: The string that identifies the device's serial number.
 
 
 Migration from V1

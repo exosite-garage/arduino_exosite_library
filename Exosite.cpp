@@ -26,6 +26,7 @@
 //*****************************************************************************
 
 #include <SPI.h>
+#include <EEPROM.h>
 #include "Exosite.h"
 
 #define serverName          "m2.exosite.com"
@@ -36,11 +37,21 @@
 //#define EXOSITEDEBUG 2
 //#define EXOSITEDEBUG 3
 
+#ifndef CIK_EEPROM_ADDRESS
+  #define CIK_EEPROM_ADDRESS 0 //Takes Addresses 0 - 39 (dec)
+#endif
+
 /*==============================================================================
 * Exosite
 *
 * constructor for Exosite class
 *=============================================================================*/
+Exosite::Exosite(Client *_client)
+{
+  client = _client;
+  fetchNVCIK();
+}
+
 Exosite::Exosite(char *_cik, Client *_client)
 {
   strncpy(cik, _cik, 41);
@@ -208,6 +219,178 @@ boolean Exosite::writeRead(String writeString, String readString, String &return
   free(returnCharString);
 
   return ret;
+}
+
+
+
+/*==============================================================================
+* provision
+*
+* Provision on Exosite Platform, activate device and get cik.
+*=============================================================================*/
+boolean Exosite::provision(char* vendorString, char* modelString, char* snString){
+  ret = false;
+  stringPos = 0;
+  DataRx= false;
+  timeout_time = 0;
+  time_now = 0;
+  timeout = 8000; // 3 seconds
+  const char* vendorParameter = "vendor=";
+  const char* modelParameter = "&model=";
+  const char* snParameter = "&sn=";
+  size_t writeStringLen = strlen(vendorString) +
+                          strlen(modelString) +
+                          strlen(snString) +
+                          strlen(vendorParameter) +
+                          strlen(modelParameter) +
+                          strlen(snParameter) + 
+                          1;
+  char *writeString = (char*)malloc(sizeof(char) * (writeStringLen));
+
+  // Assemble Parameter String
+  varPtr = writeString;
+  strcpy(varPtr, vendorParameter);
+  varPtr = varPtr + strlen(vendorParameter);
+  strcpy(varPtr, vendorString);
+  varPtr = varPtr + strlen(vendorString);
+  strcpy(varPtr, modelParameter);
+  varPtr = varPtr + strlen(modelParameter);
+  strcpy(varPtr, modelString);
+  varPtr = varPtr + strlen(modelString);
+  strcpy(varPtr, snParameter);
+  varPtr = varPtr + strlen(snParameter);
+  strcpy(varPtr, snString);
+
+  Serial.print(F("Connecting to Exosite (Provision)..."));
+
+  if (client->connect(serverName,80)) {
+    client->flush();
+    Serial.println(F("Connected"));
+
+    // Send request using Exosite basic HTTP API
+    client->println(F("POST /provision/activate HTTP/1.1"));
+    client->println(F("Host: m2.exosite.com"));
+    client->print(F("User-Agent: Exosite-Activator/"));
+    client->print(ACTIVATOR_VERSION);
+    client->print(F(" Arduino/"));
+    client->println(ARDUINO);
+    client->println(F("Content-Type: application/x-www-form-urlencoded; charset=utf-8"));
+    client->print(F("Content-Length: "));
+    client->println(strlen(writeString)); //calculate length
+    client->println();
+    client->println(writeString);
+    // Read from the nic or the IC buffer overflows with no warning and goes out to lunch
+    timeout_time = millis()+ timeout;
+
+    #ifdef EXOSITEDEBUG
+      Serial.print(F("Sent: "));
+      Serial.println(writeString);
+    #endif
+    
+    while ((timeout_time > time_now)) {
+      if (client->available()) {
+        if (!DataRx)
+          DataRx= true;
+        
+        c = client->read();
+        rxdata[stringPos] = c;
+        
+        stringPos += 1;
+      } else {
+        rxdata[stringPos] = 0;
+
+        if (DataRx) {
+          #ifdef EXOSITEDEBUG
+            Serial.println("HTTP Response:");
+            Serial.println(rxdata);
+          #endif
+
+          if (strstr(rxdata, "HTTP/1.1 200 OK")) {
+            Serial.println(F("Activated Successfully"));
+            ret = true;
+            varPtr = strstr(rxdata, "\r\n\r\n") + 4;
+
+            strncpy(cik, varPtr, 41);
+            saveNVCIK();
+          }else if(strstr(rxdata, "HTTP/1.1 404 Not Found")){
+            Serial.println(F("Error: A client matching the given parameters was not found in the provisioning system. (404)"));
+            ret = false;
+          }else if(strstr(rxdata, "HTTP/1.1 409 Conflict")){
+            Serial.println(F("Warning: The client specified is already in use. (409)"));
+            ret = false;
+          } else {
+            Serial.println(F("Warning: Unknown Response:"));
+            varPtr = strstr(rxdata, "\n");
+            *varPtr = '\0';
+            Serial.println(rxdata);
+
+            ret = false;
+          }
+
+          break;
+        }
+      }
+      time_now = millis();
+    }
+    #ifdef EXOSITEDEBUG
+      if(timeout_time <= time_now){
+        Serial.println(F("HTTP Response Timeout"));
+      }
+    #endif
+  }else{
+    Serial.println("Error: Can't Open Connection to Exosite.");
+  }
+
+  client->stop();
+
+  free(writeString);
+
+  #ifdef EXOSITEDEBUG
+    Serial.println(F("End of Provision"));
+  #endif
+
+  return ret;
+}
+
+
+
+/*==============================================================================
+* saveNVCIK
+*
+* Write the CIK to EEPROM
+*=============================================================================*/
+boolean Exosite::saveNVCIK(){
+  for(int i = 0; i < 40; i++){
+    EEPROM.write(CIK_EEPROM_ADDRESS + i, cik[i]);
+  }
+
+  return true;
+}
+
+
+
+/*==============================================================================
+* fetchNVCIK
+*
+* Fetch the CIK from EEPROM
+*=============================================================================*/
+boolean Exosite::fetchNVCIK(){
+  char tempBuf[41];
+
+  for(int i = 0; i < 40; i++){
+    tempBuf[i] = EEPROM.read(CIK_EEPROM_ADDRESS + i);
+  }
+  tempBuf[40] = 0;
+
+  Serial.println(strlen(tempBuf));
+
+  if(strlen(tempBuf) == 40){
+    strcpy(cik, tempBuf);
+    return true;
+  }else{
+    Serial.println("Warning: No CIK in NV Memory.");
+    return false;
+  }
 }
 
 /*==============================================================================

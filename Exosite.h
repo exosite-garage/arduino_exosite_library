@@ -29,6 +29,7 @@
 #define Exosite_h
 
 #include <SPI.h>
+#include <EEPROM.h>
 #include <Client.h>
 
 class Exosite
@@ -52,12 +53,18 @@ class Exosite
 
   public:
     // Constructor
+    Exosite(Client *_client);
     Exosite(char *_cik, Client *_client);
     Exosite(String _cik, Client *_client);
 
     // Current Methods
     boolean writeRead(char* writeString, char* readString, char** returnString);
     boolean writeRead(String writeString, String readString, String &returnString);
+
+    boolean provision(char* vendorString, char* modelString, char* snString);
+
+    boolean saveNVCIK();
+    boolean fetchNVCIK();
 
     // Depreciated Methods
     int sendToCloud(String res, int value);
