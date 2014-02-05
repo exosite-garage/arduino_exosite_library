@@ -28,8 +28,13 @@
 #include <SPI.h>
 #include "Exosite.h"
 
-#define serverName        "m2.exosite.com"
-#define ACTIVATOR_VERSION  F("2.1")
+#define serverName          "m2.exosite.com"
+#define ACTIVATOR_VERSION   F("2.1")
+
+// Select a Debug Level: 
+//#define EXOSITEDEBUG 1
+//#define EXOSITEDEBUG 2
+//#define EXOSITEDEBUG 3
 
 /*==============================================================================
 * Exosite
@@ -57,8 +62,11 @@ boolean Exosite::writeRead(char* writeString, char* readString, char** returnStr
   timeout = 3000; // 3 seconds
   varPtr = aliasList;
 
+  Serial.print(F("Connecting to Exosite..."));
+
   if (client->connect(serverName,80)) {
     client->flush();
+    Serial.println(F("Connected"));
 
     // Send request using Exosite basic HTTP API
     client->print(F("POST /onep:v1/stack/alias?"));
@@ -79,6 +87,10 @@ boolean Exosite::writeRead(char* writeString, char* readString, char** returnStr
     client->println(writeString);
     // Read from the nic or the IC buffer overflows with no warning and goes out to lunch
     timeout_time = millis()+ timeout;
+
+    #if EXOSITEDEBUG > 1
+      Serial.println(F("Sent"));
+    #endif
     
     while ((timeout_time > time_now) && RxLoop) {
       if (client->available()) {
@@ -87,17 +99,32 @@ boolean Exosite::writeRead(char* writeString, char* readString, char** returnStr
         
         c = client->read();
         rxdata[stringPos] = c;
+
+        #if EXOSITEDEBUG > 2
+          Serial.print(c);
+        #endif
         
         stringPos += 1;
       } else {
+        #if EXOSITEDEBUG > 1
+          Serial.println("No More Data");
+        #endif
         rxdata[stringPos] = 0;
 
         if (DataRx) {
           DataRx = false;
           RxLoop = false;
-          //Serial.println("HTTP Response:");
-          //Serial.println(rxdata);
+
+            #if EXOSITEDEBUG > 1
+              Serial.println("HTTP Response:");
+              Serial.println(rxdata);
+            #endif
+  
           if (strstr(rxdata, "HTTP/1.1 200 OK")) {
+            #ifdef EXOSITEDEBUG
+              Serial.println(F("HTTP Status: 200"));
+            #endif
+  
             ret = true;
             varPtr = strstr(rxdata, "\r\n\r\n") + 4;
 
@@ -108,20 +135,38 @@ boolean Exosite::writeRead(char* writeString, char* readString, char** returnStr
 
             strncpy(*returnString, varPtr, (rxdata + stringPos + 1) - varPtr);
           }else if(strstr(rxdata, "HTTP/1.1 204 No Content")){
+            #ifdef EXOSITEDEBUG
+              Serial.println(F("HTTP Status: 204"));
+            #endif
+  
             ret = true;
           } else {
-            varPtr = strstr(rxdata, "\n");
-            *varPtr = '\0';
+            #ifdef EXOSITEDEBUG
+              Serial.println(F("Warning Unknown Response: "));
+
+              varPtr = strstr(rxdata, "\n");
+              *varPtr = '\0';
+
+              Serial.println(rxdata);
+            #endif
           }  
         }
       }
       time_now = millis();
     }
+
+    if(timeout_time <= time_now){
+      Serial.println(F("Error: HTTP Response Timeout"));
+    }
   }else{
-    Serial.println("Can't Open Connection to Exosite.");
+    Serial.println("Error: Can't Open Connection to Exosite.");
   }
 
   client->stop();
+
+  #ifdef EXOSITEDEBUG
+    Serial.println(F("End Char ReadWrite"));
+  #endif
 
   return ret;
 }
