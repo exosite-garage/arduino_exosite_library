@@ -35,7 +35,7 @@ class Exosite
 {
   private:
     class Client* client;
-    String cik;
+    char cik[41];
     char rxdata[200];
     char aliasList[50];
     char* varPtr;
@@ -52,6 +52,7 @@ class Exosite
 
   public:
     // Constructor
+    Exosite(char *_cik, Client *_client);
     Exosite(String _cik, Client *_client);
 
     // Current Methods

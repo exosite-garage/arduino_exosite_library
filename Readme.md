@@ -23,6 +23,24 @@ Note: You will need to restart the Arduino IDE after installing the library.
 
 Interface
 =========
+
+Constructor
+-----------
+```c
+Exosite(char *_cik, Client *_client);
+```
+
+```c
+Exosite(String _cik, Client *_client);
+```
+
+`_cik`: This is used to hard code the CIK into the device can either be a `char[]` or a `String` type.
+
+`_client`: This is the interface to what ever network device you're using. Must be a subclass of [`Client`](http://arduino.cc/en/Reference/ClientConstructor) such as: [`EthernetClient`](http://arduino.cc/en/Reference/EthernetClient), [`WiFiClient`](http://arduino.cc/en/Reference/WiFiClient), or [`YunClient`](http://arduino.cc/en/Reference/YunClientConstructor)/
+
+writeRead
+---------
+
 ```c
 boolean Exosite::writeRead(char* writeString, char* readString, char** returnString)
 ```

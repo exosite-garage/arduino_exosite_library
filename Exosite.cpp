@@ -41,9 +41,15 @@
 *
 * constructor for Exosite class
 *=============================================================================*/
+Exosite::Exosite(char *_cik, Client *_client)
+{
+  strncpy(cik, _cik, 41);
+  client = _client;
+}
+
 Exosite::Exosite(String _cik, Client *_client)
 {
-  cik = _cik;
+  _cik.toCharArray(cik, 41);
   client = _client;
 }
 
