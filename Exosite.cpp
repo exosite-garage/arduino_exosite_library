@@ -241,23 +241,29 @@ boolean Exosite::writeRead(const String &writeString, const String &readString, 
   free(readCharString);
   free(returnCharString);
 
+
+  #if EXOSITEDEBUG > 2
+    Serial.print(getFreeMemory());
+    Serial.println(F(" = Free Memory String Chars Freed"));
+  #endif
+
   return ret;
 }
 
 
-
+#ifdef EXOSITE_USE_PROVISION
 /*==============================================================================
 * provision
 *
 * Provision on Exosite Platform, activate device and get cik.
 *=============================================================================*/
-boolean Exosite::provision(char* vendorString, char* modelString, char* snString){
+boolean Exosite::provision(const char* vendorString, const char* modelString, const char* snString){
   ret = false;
   stringPos = 0;
   DataRx= false;
   timeout_time = 0;
   time_now = 0;
-  timeout = 8000; // 3 seconds
+  timeout = 3000; // 3 seconds
   const char* vendorParameter = "vendor=";
   const char* modelParameter = "&model=";
   const char* snParameter = "&sn=";
