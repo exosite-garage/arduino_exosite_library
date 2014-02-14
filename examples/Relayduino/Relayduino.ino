@@ -1,6 +1,7 @@
 //*****************************************************************************
 //
-// relayduino.ino - Controling the Relayduino from the Cloud with Exosite
+// relayduino.ino - Controlling the Relayduino from the Cloud with Exosite
+//                  Now updated to use provisioning.
 //
 // Copyright (c) 2012 Exosite LLC.  All rights reserved.
 // 
@@ -29,15 +30,13 @@
 // Fill in your MAC here! (e.g. {0x90, 0xA2, 0xDA, 0x00, 0x22, 0x33}) 
 byte macData[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }; 
 
-//Fill in your CIK here! (https://portals.exosite.com -> Add Device)
-char cikData[] = "0000000000000000000000000000000000000000";  
-
 // Set the maximum interval we should read and write to Exosite.
 unsigned long loop_interval_ms = 10000; // milliseconds
 
 /*****************************************************************************/
 
 #include <SPI.h>
+#include <EEPROM.h>
 #include <Ethernet.h>
 #include <Exosite.h>
 
@@ -70,7 +69,7 @@ const char* Opto_Aliases[4] = {"OI1", "OI2", "OI3", "OI4"};
 //global variables    
 
 class EthernetClient client;
-Exosite exosite(cikData, &client);
+Exosite exosite(&client);
 
 unsigned long last_millis = 0;
 
@@ -82,6 +81,11 @@ int index = 0;
 int lastIndex = -1;
 int pinNumber = 0;
 
+unsigned char reprovisionAfter = 3;  // Number errors before reprovision attempt
+unsigned char errorCount = 3;        // Force Provision On First Loop
+
+char macString[18];  // Used to store a formatted version of the MAC
+
 /*==============================================================================
  * setup
  *
@@ -92,8 +96,21 @@ void setup()
   Serial.begin(115200);
   Serial.println(F("Boot"));
 
+  // Create String Version of MAC for Provisioning.
+  // For WiFi Shield
+  //snprintf(macString, 18, "%02X:%02X:%02X:%02X:%02X:%02X",
+  //         macData[5], macData[4], macData[3], macData[2], macData[1], macData[0]);
+  // For Ethernet Shield
+  snprintf(macString, 18, "%02X:%02X:%02X:%02X:%02X:%02X",
+           macData[0], macData[1], macData[2], macData[3], macData[4], macData[5]);
   Ethernet.begin(macData);
-  delay(1000);
+  
+  Serial.print(F("MAC Address: "));
+  Serial.println(macString);
+  Serial.println(strlen(macString));
+  
+  Serial.print(F("IP Address: "));
+  Serial.println(Ethernet.localIP());
   
   for(int i = 0; i < 8; i++){
     pinMode(Relays[i], OUTPUT);
@@ -114,6 +131,13 @@ void loop()
   index = 0;
   lastIndex = -1;
   
+  // Reprovision If Needed
+  if( errorCount >= reprovisionAfter ){
+    if( exosite.provision("exosite", "oc-kta-223", macString) ){
+      errorCount = 0;
+    }
+  }
+  
   // Setup Values to Write
   for(int i = 0; i < 4; i++){
     writeString += String(Opto_Aliases[i]) + "=" + digitalRead(Optos[i]) + "&";
@@ -125,6 +149,8 @@ void loop()
   Serial.print(F("Connecting to Exosite..."));
 
   if(exosite.writeRead(writeString, readString, returnString)){
+    errorCount = 0;
+    
     Serial.println(F("Success"));
     for(;;){
       index = returnString.indexOf("=", lastIndex+1);
@@ -164,6 +190,7 @@ void loop()
       }
     }
   }else{
+    errorCount++;
     Serial.println(F("Error Communicating with Exosite"));
   }
   
