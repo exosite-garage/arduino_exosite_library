@@ -15,8 +15,9 @@ Exosite	KEYWORD1
 sendToCloud		KEYWORD2
 readFromCloud	KEYWORD2
 readFromCloud	KEYWORD2
-readWrite		KEYWORD2
 writeRead		KEYWORD2
+provision		KEYWORD2
+time			KEYWORD2
 
 #######################################
 # Instances (KEYWORD2)
