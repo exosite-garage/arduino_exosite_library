@@ -415,12 +415,114 @@ boolean Exosite::fetchNVCIK(){
 
   if(strlen(tempBuf) == 40){
     strcpy(cik, tempBuf);
+    Serial.print(F("Read CIK: "));
+    Serial.println(cik);
     return true;
   }else{
-    Serial.println("Warning: No CIK in NV Memory.");
+    Serial.println(F("Warning: No CIK in NV Memory."));
     return false;
   }
 }
+
+#endif
+
+/*==============================================================================
+* time
+*
+* Gets the server time as a unix timestamp from m2.exosite.com/timestamp.
+*=============================================================================*/
+
+#ifdef EXOSITE_USE_TIME
+
+unsigned long Exosite::time(){
+  unsigned long timestamp;
+  ret = false;
+  stringPos = 0;
+  DataRx= false;
+  timeout_time = 0;
+  time_now = 0;
+  timeout = 3000; // 3 seconds
+
+  Serial.print(F("Connecting to Exosite (Time)..."));
+
+  if (client->connect(serverName,80)) {
+    client->flush();
+    Serial.println(F("Connected"));
+
+    // Send request using Exosite basic HTTP API
+    client->println(F("GET /timestamp HTTP/1.1"));
+    client->println(F("Host: m2.exosite.com"));
+    client->print(F("User-Agent: Exosite-Activator/"));
+    client->print(ACTIVATOR_VERSION);
+    client->print(F(" Arduino/"));
+    client->println(ARDUINO);
+    client->println();
+
+    // Read from the nic or the IC buffer overflows with no warning and goes out to lunch
+    timeout_time = millis()+ timeout;
+
+    #ifdef EXOSITEDEBUG
+      Serial.print(F("Sent"));
+    #endif
+    
+    while ((timeout_time > time_now)) {
+      if (client->available()) {
+        if (!DataRx)
+          DataRx= true;
+        
+        c = client->read();
+        rxdata[stringPos] = c;
+        
+        stringPos += 1;
+      } else {
+        rxdata[stringPos] = 0;
+
+        if (DataRx) {
+          #ifdef EXOSITEDEBUG
+            Serial.println(F("HTTP Response:"));
+            Serial.println(rxdata);
+          #endif
+
+          if (strstr(rxdata, "HTTP/1.1 200 OK")) {
+            ret = true;
+            varPtr = strstr(rxdata, "\r\n\r\n") + 4;
+            Serial.print(F("Current Time is: "));
+            Serial.println(varPtr);
+
+            timestamp = strtoul(varPtr, NULL, 10);
+          }else {
+            Serial.println(F("Warning: Unknown Response:"));
+            varPtr = strstr(rxdata, "\n");
+            *varPtr = '\0';
+            Serial.println(rxdata);
+
+            ret = false;
+          }
+
+          break;
+        }
+      }
+      time_now = millis();
+    }
+    #ifdef EXOSITEDEBUG
+      if(timeout_time <= time_now){
+        Serial.println(F("HTTP Response Timeout"));
+      }
+    #endif
+  }else{
+    Serial.println(F("Error: Can't Open Connection to Exosite."));
+  }
+
+  client->stop();
+
+  #ifdef EXOSITEDEBUG
+    Serial.println(F("End of Time"));
+  #endif
+
+  return ret;
+}
+
+#endif
 
 /*==============================================================================
 * DEPRECIATED METHODS

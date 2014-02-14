@@ -42,11 +42,14 @@
 #endif
 
 
-// If you are short on resources, commenting out the following statement
+// If you are short on resources, commenting out the following two statements
 // can reduce program size slightly by removing optional features.
 
 // Enable Provisioning
 #define EXOSITE_USE_PROVISION
+
+// Enable Reading Server Time
+#define EXOSITE_USE_TIME
 
 // Do not Edit Past This Point
 
@@ -98,6 +101,10 @@ class Exosite
 
     boolean saveNVCIK();
     boolean fetchNVCIK();
+    #endif
+
+    #ifdef EXOSITE_USE_TIME
+    unsigned long time();
     #endif
 
     // Depreciated Methods
