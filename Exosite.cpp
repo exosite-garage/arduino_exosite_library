@@ -25,33 +25,20 @@
 //
 //*****************************************************************************
 
-#include <SPI.h>
-#include <EEPROM.h>
-#include <MemoryFree.h>
 #include "Exosite.h"
-
-#define serverName          "m2.exosite.com"
-#define ACTIVATOR_VERSION   F("2.1")
-
-// Select a Debug Level: 
-//#define EXOSITEDEBUG 1
-//#define EXOSITEDEBUG 2
-//#define EXOSITEDEBUG 3
-
-#ifndef CIK_EEPROM_ADDRESS
-  #define CIK_EEPROM_ADDRESS 0 //Takes Addresses 0 - 39 (dec)
-#endif
 
 /*==============================================================================
 * Exosite
 *
 * constructor for Exosite class
 *=============================================================================*/
+#ifdef EXOSITE_USE_PROVISION
 Exosite::Exosite(Client *_client)
 {
   client = _client;
   fetchNVCIK();
 }
+#endif
 
 Exosite::Exosite(const char *_cik, Client *_client)
 {

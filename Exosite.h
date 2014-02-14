@@ -28,9 +28,39 @@
 #ifndef Exosite_h
 #define Exosite_h
 
+
+#define serverName          "m2.exosite.com"
+#define ACTIVATOR_VERSION   F("2.2a")
+
+// Select a Debug Level: 
+//#define EXOSITEDEBUG 1
+//#define EXOSITEDEBUG 2
+//#define EXOSITEDEBUG 3
+
+#ifndef CIK_EEPROM_ADDRESS
+  #define CIK_EEPROM_ADDRESS 0 //Takes Addresses 0 - 39 (dec)
+#endif
+
+
+// If you are short on resources, commenting out the following statement
+// can reduce program size slightly by removing optional features.
+
+// Enable Provisioning
+#define EXOSITE_USE_PROVISION
+
+// Do not Edit Past This Point
+
 #include <SPI.h>
-#include <EEPROM.h>
 #include <Client.h>
+
+#ifdef EXOSITE_USE_PROVISION
+#include <EEPROM.h>
+#endif
+
+
+#if EXOSITEDEBUG > 2
+#include <MemoryFree.h>
+#endif
 
 class Exosite
 {
@@ -53,7 +83,9 @@ class Exosite
 
   public:
     // Constructor
+    #ifdef EXOSITE_USE_PROVISION
     Exosite(Client *_client);
+    #endif
     Exosite(const char *_cik, Client *_client);
     Exosite(const String _cik, Client *_client);
 
@@ -61,10 +93,12 @@ class Exosite
     boolean writeRead(const char* writeString,const char* readString, char** returnString);
     boolean writeRead(const String &writeString, const String &readString, String &returnString);
 
+    #ifdef EXOSITE_USE_PROVISION
     boolean provision(const char* vendorString, const char* modelString, const char* snString);
 
     boolean saveNVCIK();
     boolean fetchNVCIK();
+    #endif
 
     // Depreciated Methods
     int sendToCloud(String res, int value);
