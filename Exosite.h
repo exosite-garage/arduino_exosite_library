@@ -30,7 +30,7 @@
 
 
 #define serverName          "m2.exosite.com"
-#define ACTIVATOR_VERSION   F("2.2a")
+#define ACTIVATOR_VERSION   F("2.2rc1")
 
 // Select a Debug Level: 
 //#define EXOSITEDEBUG 1
