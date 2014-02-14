@@ -54,14 +54,14 @@ class Exosite
   public:
     // Constructor
     Exosite(Client *_client);
-    Exosite(char *_cik, Client *_client);
-    Exosite(String _cik, Client *_client);
+    Exosite(const char *_cik, Client *_client);
+    Exosite(const String _cik, Client *_client);
 
     // Current Methods
-    boolean writeRead(char* writeString, char* readString, char** returnString);
-    boolean writeRead(String writeString, String readString, String &returnString);
+    boolean writeRead(const char* writeString,const char* readString, char** returnString);
+    boolean writeRead(const String &writeString, const String &readString, String &returnString);
 
-    boolean provision(char* vendorString, char* modelString, char* snString);
+    boolean provision(const char* vendorString, const char* modelString, const char* snString);
 
     boolean saveNVCIK();
     boolean fetchNVCIK();

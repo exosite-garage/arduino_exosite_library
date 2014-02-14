@@ -53,13 +53,13 @@ Exosite::Exosite(Client *_client)
   fetchNVCIK();
 }
 
-Exosite::Exosite(char *_cik, Client *_client)
+Exosite::Exosite(const char *_cik, Client *_client)
 {
   strncpy(cik, _cik, 41);
   client = _client;
 }
 
-Exosite::Exosite(String _cik, Client *_client)
+Exosite::Exosite(const String _cik, Client *_client)
 {
   _cik.toCharArray(cik, 41);
   client = _client;
@@ -70,7 +70,7 @@ Exosite::Exosite(String _cik, Client *_client)
 *
 * One step read and write to Exosite using char arrays.
 *=============================================================================*/
-boolean Exosite::writeRead(char* writeString, char* readString, char** returnString){
+boolean Exosite::writeRead(const char* writeString, const char* readString, char** returnString){
   ret = false;
   stringPos = 0;
   DataRx= false;
@@ -194,7 +194,7 @@ boolean Exosite::writeRead(char* writeString, char* readString, char** returnStr
 *
 * One step read and write to Exosite using Arduino String objects.
 *=============================================================================*/
-boolean Exosite::writeRead(String writeString, String readString, String &returnString){
+boolean Exosite::writeRead(const String &writeString, const String &readString, String &returnString){
   #if EXOSITEDEBUG > 2
     Serial.print(getFreeMemory());
     Serial.println(F(" = Free Memory String Start"));
