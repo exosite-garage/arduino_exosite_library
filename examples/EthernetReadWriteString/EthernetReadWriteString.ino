@@ -28,6 +28,7 @@
 //*****************************************************************************
 
 #include <SPI.h>
+#include <EEPROM.h>
 #include <Ethernet.h>
 #include <Exosite.h>
 

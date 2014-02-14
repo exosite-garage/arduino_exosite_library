@@ -28,6 +28,7 @@
 //*****************************************************************************
 
 #include <SPI.h>
+#include <EEPROM.h>
 #include <WiFi.h>
 #include <Exosite.h>
 
