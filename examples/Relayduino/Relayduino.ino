@@ -107,7 +107,6 @@ void setup()
   
   Serial.print(F("MAC Address: "));
   Serial.println(macString);
-  Serial.println(strlen(macString));
   
   Serial.print(F("IP Address: "));
   Serial.println(Ethernet.localIP());

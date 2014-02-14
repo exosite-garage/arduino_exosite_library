@@ -38,7 +38,7 @@
 *
 * Change these variables to your own settings.
 *=============================================================================*/
-byte macData[] = { 0x90, 0xA2, 0xDA, 0x00, 0x22, 0x33 };        // <-- Fill in your Ethernet shield's MAC address here.
+byte macData[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };        // <-- Fill in your Ethernet shield's MAC address here.
 
 // Use these variables to customize what datasources are read and written to.
 const String readString = "command&uptime";
@@ -77,7 +77,6 @@ void setup(){
   // Print Some Useful Info
   Serial.print(F("MAC Address: "));
   Serial.println(macString);
-  Serial.println(strlen(macString));
   
   Serial.print(F("IP Address: "));
   Serial.println(Ethernet.localIP());
