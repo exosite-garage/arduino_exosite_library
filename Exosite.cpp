@@ -27,6 +27,7 @@
 
 #include <SPI.h>
 #include <EEPROM.h>
+#include <MemoryFree.h>
 #include "Exosite.h"
 
 #define serverName          "m2.exosite.com"
@@ -123,8 +124,8 @@ boolean Exosite::writeRead(char* writeString, char* readString, char** returnStr
         
         stringPos += 1;
       } else {
-        #if EXOSITEDEBUG > 1
-          Serial.println("No More Data");
+        #if EXOSITEDEBUG > 4
+          Serial.println(F("No More Data"));
         #endif
         rxdata[stringPos] = 0;
 
@@ -176,7 +177,7 @@ boolean Exosite::writeRead(char* writeString, char* readString, char** returnStr
       Serial.println(F("Error: HTTP Response Timeout"));
     }
   }else{
-    Serial.println("Error: Can't Open Connection to Exosite.");
+    Serial.println(F("Error: Can't Open Connection to Exosite."));
   }
 
   client->stop();
@@ -194,10 +195,24 @@ boolean Exosite::writeRead(char* writeString, char* readString, char** returnStr
 * One step read and write to Exosite using Arduino String objects.
 *=============================================================================*/
 boolean Exosite::writeRead(String writeString, String readString, String &returnString){
+  #if EXOSITEDEBUG > 2
+    Serial.print(getFreeMemory());
+    Serial.println(F(" = Free Memory String Start"));
+    Serial.println(writeString);
+    Serial.println(readString);
+  #endif
+
   char *writeCharString, *readCharString, *returnCharString;
   writeCharString = (char*)malloc(sizeof(char) * writeString.length()+1);
   readCharString = (char*)malloc(sizeof(char) * readString.length()+1);
   returnCharString = (char*)malloc(sizeof(char) * 32);
+
+  #if EXOSITEDEBUG > 2
+    Serial.print(getFreeMemory());
+    Serial.println(F(" = Free Memory String Chars Allocated"));
+    Serial.print(F("Return Address Before: "));
+    Serial.println((intptr_t)returnCharString);
+  #endif
 
   if(writeCharString == 0 || readCharString == 0 || returnCharString == 0){
     Serial.println(F("Not Enough Ram! Failing!"));
@@ -207,8 +222,29 @@ boolean Exosite::writeRead(String writeString, String readString, String &return
   writeString.toCharArray(writeCharString, writeString.length()+1);
   readString.toCharArray(readCharString, readString.length()+1);
 
+
+  #if EXOSITEDEBUG > 2
+    Serial.print(getFreeMemory());
+    Serial.println(F(" = Free Memory String Start Char Write"));
+  #endif
+
   if(this->writeRead(writeCharString, readCharString, &returnCharString)){
+
+    #if EXOSITEDEBUG > 2
+      Serial.print(getFreeMemory());
+      Serial.println(F(" = Free Memory String Char Write Finished"));
+      Serial.print(F("Return Address After: "));
+      Serial.println((intptr_t)returnCharString);
+    #endif
+
     returnString = returnCharString;
+
+
+    #if EXOSITEDEBUG > 2
+      Serial.print(getFreeMemory());
+      Serial.println(F(" = Free Memory String Chars Copied"));
+    #endif
+
     ret = true;
   }else{
     Serial.println(F("Error Communicating with Exosite"));
@@ -301,7 +337,7 @@ boolean Exosite::provision(char* vendorString, char* modelString, char* snString
 
         if (DataRx) {
           #ifdef EXOSITEDEBUG
-            Serial.println("HTTP Response:");
+            Serial.println(F("HTTP Response:"));
             Serial.println(rxdata);
           #endif
 
@@ -338,7 +374,7 @@ boolean Exosite::provision(char* vendorString, char* modelString, char* snString
       }
     #endif
   }else{
-    Serial.println("Error: Can't Open Connection to Exosite.");
+    Serial.println(F("Error: Can't Open Connection to Exosite."));
   }
 
   client->stop();
