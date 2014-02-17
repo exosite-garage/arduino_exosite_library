@@ -26,15 +26,15 @@ Interface
 
 Constructor
 -----------
-```c
+```cpp
 Exosite(Client *_client);
 ```
 
-```c
+```cpp
 Exosite(char *_cik, Client *_client);
 ```
 
-```c
+```cpp
 Exosite(String _cik, Client *_client);
 ```
 
@@ -45,11 +45,11 @@ Exosite(String _cik, Client *_client);
 writeRead
 ---------
 
-```c
+```cpp
 boolean Exosite::writeRead(char* writeString, char* readString, char** returnString)
 ```
 
-```c
+```cpp
 boolean Exosite::writeRead(String writeString, String readString, String &returnString)
 ```
 
@@ -61,8 +61,8 @@ boolean Exosite::writeRead(String writeString, String readString, String &return
 
 provision
 ---------
-```c
-boolean provision(char* vendorString, char* modelString, char* snString);
+```cpp
+boolean Exosite::provision(char* vendorString, char* modelString, char* snString);
 ```
 
 `vendorString`: The string that identifies the device vendor name.
