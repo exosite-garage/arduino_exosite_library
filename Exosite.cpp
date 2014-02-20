@@ -197,7 +197,7 @@ boolean Exosite::writeRead(String writeString, String readString, String &return
   readString.toCharArray(readCharString, readString.length()+1);
 
   if(this->writeRead(writeCharString, readCharString, &returnCharString)){
-    returnString = returnCharString;
+    returnString = String(returnCharString);
     ret = true;
   }else{
     Serial.println(F("Error Communicating with Exosite"));
