@@ -40,7 +40,6 @@ Version History:
   
   
 #include <SPI.h>
-#include <EEPROM.h>
 #include <Ethernet.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>

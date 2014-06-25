@@ -29,7 +29,6 @@
 #include <Bridge.h>
 #include <YunClient.h>
 #include <Exosite.h>
-#include <EEPROM.h>
 
 /*==============================================================================
 * Configuration Variables

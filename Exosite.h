@@ -41,24 +41,11 @@
   #define CIK_EEPROM_ADDRESS 0 //Takes Addresses 0 - 39 (dec)
 #endif
 
-
-// If you are short on resources, commenting out the following two statements
-// can reduce program size slightly by removing optional features.
-
-// Enable Provisioning
-#define EXOSITE_USE_PROVISION
-
-// Enable Reading Server Time
-#define EXOSITE_USE_TIME
-
 // Do not Edit Past This Point
 
 #include <SPI.h>
 #include <Client.h>
-
-#ifdef EXOSITE_USE_PROVISION
 #include <EEPROM.h>
-#endif
 
 
 #if EXOSITEDEBUG > 2
@@ -86,9 +73,7 @@ class Exosite
 
   public:
     // Constructor
-    #ifdef EXOSITE_USE_PROVISION
     Exosite(Client *_client);
-    #endif
     Exosite(const char *_cik, Client *_client);
     Exosite(const String _cik, Client *_client);
 
@@ -96,16 +81,12 @@ class Exosite
     boolean writeRead(const char* writeString,const char* readString, char** returnString);
     boolean writeRead(const String &writeString, const String &readString, String &returnString);
 
-    #ifdef EXOSITE_USE_PROVISION
     boolean provision(const char* vendorString, const char* modelString, const char* snString);
 
     boolean saveNVCIK();
     boolean fetchNVCIK();
-    #endif
 
-    #ifdef EXOSITE_USE_TIME
     unsigned long time();
-    #endif
 
     // Depreciated Methods
     int sendToCloud(String res, int value);

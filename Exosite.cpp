@@ -32,13 +32,11 @@
 *
 * constructor for Exosite class
 *=============================================================================*/
-#ifdef EXOSITE_USE_PROVISION
 Exosite::Exosite(Client *_client)
 {
   client = _client;
   fetchNVCIK();
 }
-#endif
 
 Exosite::Exosite(const char *_cik, Client *_client)
 {
@@ -250,8 +248,6 @@ boolean Exosite::writeRead(const String &writeString, const String &readString, 
   return ret;
 }
 
-
-#ifdef EXOSITE_USE_PROVISION
 /*==============================================================================
 * provision
 *
@@ -424,16 +420,11 @@ boolean Exosite::fetchNVCIK(){
   }
 }
 
-#endif
-
 /*==============================================================================
 * time
 *
 * Gets the server time as a unix timestamp from m2.exosite.com/timestamp.
 *=============================================================================*/
-
-#ifdef EXOSITE_USE_TIME
-
 unsigned long Exosite::time(){
   unsigned long timestamp;
   ret = false;
@@ -522,7 +513,6 @@ unsigned long Exosite::time(){
   return ret;
 }
 
-#endif
 
 /*==============================================================================
 * DEPRECIATED METHODS

@@ -30,7 +30,6 @@
 #include <YunClient.h>
 #include <Process.h>
 #include <Exosite.h>
-#include <EEPROM.h>
 
 /*==============================================================================
 * Configuration Variables
