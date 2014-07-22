@@ -84,11 +84,9 @@ You will also need to remove `exosite.init();` and add `Ethernet.begin(macData);
 
 Release Info
 ============
-**v2.2 - Release 2013-02-14**
+**v2.2 - Release 2014-07-22**
  - Added Provisioning Support
    - Added Internal Functions to Read and Write CIK from EEPROM
-
-NOTE: With this release, `#include <EEPROM.h>` must be added to the top of your sketch.
 
 **v2.1.1 - Release 2013-11-04**
  - Removed depreciated 'readWrite' method to reduce confusion. 'readFromCloud' and 'sendToCloud' still supported.
