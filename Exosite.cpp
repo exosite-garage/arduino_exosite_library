@@ -222,7 +222,7 @@ boolean Exosite::writeRead(const String &writeString, const String &readString, 
       Serial.println((intptr_t)returnCharString);
     #endif
 
-    returnString = returnCharString;
+    returnString = String(returnCharString);
 
 
     #if EXOSITEDEBUG > 2
