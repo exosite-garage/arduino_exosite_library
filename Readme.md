@@ -84,6 +84,9 @@ You will also need to remove `exosite.init();` and add `Ethernet.begin(macData);
 
 Release Info
 ============
+**v2.2.1- Release 2014-08-04**
+ - Added needed include statements to Yun examples.
+
 **v2.2 - Release 2014-07-22**
  - Added Provisioning Support
    - Added Internal Functions to Read and Write CIK from EEPROM
