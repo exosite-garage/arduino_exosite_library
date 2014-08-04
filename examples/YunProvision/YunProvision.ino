@@ -26,6 +26,8 @@
 //
 //*****************************************************************************
 
+#include <EEPROM.h>
+#include <SPI.h>
 #include <Bridge.h>
 #include <YunClient.h>
 #include <Process.h>
