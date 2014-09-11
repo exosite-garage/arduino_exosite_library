@@ -84,7 +84,12 @@ You will also need to remove `exosite.init();` and add `Ethernet.begin(macData);
 
 Release Info
 ============
-**v2.2.1- Release 2014-08-04**
+**v2.3.0 - Release 2014-09-11**
+ - Added EEPROM includes back to all examples.
+ - Now leaving socket open between requests.
+ - Merged PR from DrewJaworskiRIS to wrap char string in String object constructor before returning. (Thanks!)
+
+**v2.2.1 - Release 2014-08-04**
  - Added needed include statements to Yun examples.
 
 **v2.2 - Release 2014-07-22**
