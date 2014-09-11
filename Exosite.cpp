@@ -67,7 +67,11 @@ boolean Exosite::writeRead(const char* writeString, const char* readString, char
 
   Serial.print(F("Connecting to Exosite..."));
 
-  if (client->connect(serverName,80)) {
+  if (!client->connected()) {
+    client->connect(serverName,80);
+  }
+
+  if (client->connected()) {
     client->flush();
     Serial.println(F("Connected"));
 
@@ -164,8 +168,6 @@ boolean Exosite::writeRead(const char* writeString, const char* readString, char
   }else{
     Serial.println(F("Error: Can't Open Connection to Exosite."));
   }
-
-  client->stop();
 
   #ifdef EXOSITEDEBUG
     Serial.println(F("End Char ReadWrite"));
@@ -288,7 +290,11 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
 
   Serial.print(F("Connecting to Exosite (Provision)..."));
 
-  if (client->connect(serverName,80)) {
+  if (!client->connected()) {
+    client->connect(serverName,80);
+  }
+
+  if (client->connected()) {
     client->flush();
     Serial.println(F("Connected"));
 
@@ -366,8 +372,6 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
     Serial.println(F("Error: Can't Open Connection to Exosite."));
   }
 
-  client->stop();
-
   free(writeString);
 
   #ifdef EXOSITEDEBUG
@@ -434,7 +438,11 @@ unsigned long Exosite::time(){
 
   Serial.print(F("Connecting to Exosite (Time)..."));
 
-  if (client->connect(serverName,80)) {
+  if (!client->connected()) {
+    client->connect(serverName,80);
+  }
+
+  if (client->connected()) {
     client->flush();
     Serial.println(F("Connected"));
 
@@ -501,8 +509,6 @@ unsigned long Exosite::time(){
   }else{
     Serial.println(F("Error: Can't Open Connection to Exosite."));
   }
-
-  client->stop();
 
   #ifdef EXOSITEDEBUG
     Serial.println(F("End of Time"));
