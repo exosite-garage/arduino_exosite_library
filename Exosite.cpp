@@ -68,6 +68,8 @@ boolean Exosite::writeRead(const char* writeString, const char* readString, char
   Serial.print(F("Connecting to Exosite..."));
 
   if (!client->connected()) {
+    Serial.print("No Connection...");
+    client->stop();
     client->connect(serverName,80);
   }
 

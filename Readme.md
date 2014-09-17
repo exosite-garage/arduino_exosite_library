@@ -84,6 +84,9 @@ You will also need to remove `exosite.init();` and add `Ethernet.begin(macData);
 
 Release Info
 ============
+**v2.3.1 - Release 2014-09-17**
+ - Added client->stop() before client->connect(), the Ethernet shield seems to need this or connect() does nothing.
+
 **v2.3.0 - Release 2014-09-11**
  - Added EEPROM includes back to all examples.
  - Now leaving socket open between requests.
