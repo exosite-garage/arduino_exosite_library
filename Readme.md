@@ -1,12 +1,29 @@
 About the Exosite Arduino Library
 =================================
-This library allows you to quickly and easily connect your Arduino project to Exosite's Data Platform in the cloud. It connects your project using an Arduino Ethernet shield, Arduino WiFi Shield, or any other networking shield that subclasses the Client class. See the examples folder for both an Ethernet and a WiFi example.
+This library allows you to quickly and easily connect your [Arduino](http://arduino.cc) project to Exosite's Data Platform in the cloud. It connects your project using an Arduino Ethernet shield, Arduino WiFi Shield, or any other networking shield that subclasses the Client class. See the examples folder for both an Ethernet and a WiFi example.
 
 Note: A free account on exosite portals is required: https://portals.exosite.com
 
 License is BSD, Copyright 2013, Exosite LLC (see LICENSE file)
 
 Tested with Arduino 1.0.5 and 1.5.5
+
+![image](content/ArduinoUno_R3_Front_450px.jpg)
+
+Help
+====
+Troubleshooting information and help can be in the Exosite Community Forum.
+
+[Community Forum](https://community.exosite.com/)
+
+
+Requirements
+============
+
+* Arduino IDE must be installed on your computer [Arduino IDE](http://www.arduino.cc/en/Main/software)
+* Need an internet enabled Arduino system, which is typically done by adding a Ethernet or WiFi.
+* Note: Cellular shields typically will not work with this library as is.  They typically require direct AT commands sent to open sockets, send date, etc. The libraries code can be used as reference for what needs to be sent over the modem connection.
+
 
 Installing
 ==========
@@ -20,6 +37,12 @@ git clone https://github.com/exosite-garage/arduino_exosite_library.git Exosite
 If you would rather not use the command line or you don't have git installed, click the download button on the right hand side of this page and choose to open the ZIP. Copy the contained folder to your Arduino IDE's libraries folder (inside your sketchbook folder) and Rename it to "Exosite". If you do not know the location of sketchbook folder click on "File->Preferences" in the IDE and you should see it listed.
 
 Note: You will need to restart the Arduino IDE after installing the library.
+
+Examples
+========
+This library includes examples, which will be available in the Arduino IDE 'Examples' menu directory.
+
+
 
 Interface
 =========
