@@ -68,7 +68,7 @@ boolean Exosite::writeRead(const char* writeString, const char* readString, char
   Serial.print(F("Connecting to Exosite..."));
 
   if (!client->connected()) {
-    Serial.print("No Connection...");
+    Serial.print("No Existing Connection, Opening One...");
     client->stop();
     client->connect(serverName,80);
   }
@@ -293,6 +293,8 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
   Serial.print(F("Connecting to Exosite (Provision)..."));
 
   if (!client->connected()) {
+    Serial.print("No Existing Connection, Opening One...");
+    client->stop();
     client->connect(serverName,80);
   }
 
@@ -441,6 +443,8 @@ unsigned long Exosite::time(){
   Serial.print(F("Connecting to Exosite (Time)..."));
 
   if (!client->connected()) {
+    Serial.print("No Existing Connection, Opening One...");
+    client->stop();
     client->connect(serverName,80);
   }
 
