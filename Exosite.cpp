@@ -342,11 +342,21 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
 
           if (strstr(rxdata, "HTTP/1.1 200 OK")) {
             Serial.println(F("Activated Successfully"));
-            ret = true;
             varPtr = strstr(rxdata, "\r\n\r\n") + 4;
 
-            strncpy(cik, varPtr, 41);
-            saveNVCIK();
+            if(strlen(varPtr) == 40 && this->isHex(varPtr, 40)){
+              strncpy(cik, varPtr, 41);
+              saveNVCIK();
+              ret = true;
+            }else{
+              Serial.print(F("CRITICAL: Got 200 Response, Wasn't a Valid CIK"));
+              #if EXOSITEDEBUG > 9
+              Serial.print(F("CRITICAL: Failing Hard to Preserve State"));
+              while(1);
+              #endif
+              ret = false;
+            }
+
           }else if(strstr(rxdata, "HTTP/1.1 404 Not Found")){
             Serial.println(F("Error: A client matching the given parameters was not found in the provisioning system. (404)"));
             ret = false;
@@ -521,6 +531,18 @@ unsigned long Exosite::time(){
   #endif
 
   return ret;
+}
+
+boolean Exosite::isHex(char *str, int len){
+  for(int i = 0; i < len; i++){
+    if(!((str[i] >= '0' && str[i] <= '9') ||
+         (str[i] >= 'A' && str[i] <= 'F') ||
+         (str[i] >= 'a' && str[i] <= 'f'))){
+      return false;
+    }
+  }
+
+  return true;
 }
 
 

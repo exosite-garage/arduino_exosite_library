@@ -70,6 +70,9 @@ class Exosite
     unsigned long time_now;
     unsigned long timeout;
 
+    // Helpers
+    boolean isHex(char *str, int len);
+
 
   public:
     // Constructor
