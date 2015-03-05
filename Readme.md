@@ -107,6 +107,11 @@ You will also need to remove `exosite.init();` and add `Ethernet.begin(macData);
 
 Release Info
 ============
+**v2.3.2 - Release 2015-03-05**
+ - Added client->stop() before client->connect() to activate and timestamp too.
+ - Clarified some serial debug statements.
+ - Check that CIK is 40 hex characters on seemingly successful activation before blowing away old CIK.
+
 **v2.3.1 - Release 2014-09-17**
  - Added client->stop() before client->connect(), the Ethernet shield seems to need this or connect() does nothing.
 
