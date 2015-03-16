@@ -87,8 +87,11 @@ void loop(){
      http://docs.exosite.com/provision/device/
      */
   
-    // Check if we should reprovision.
-  if(exosite.provision("exosite", "ard-generic", macString)){
+  Serial.print(F("Attemp to reprovision using identifier: "));
+  Serial.println(macString);
+  
+  // Check if we should reprovision.
+  if(exosite.provision("exosite", "arduinoyun-generic", macString)){
     Serial.println("Activation success!");
   }else{
     Serial.println("Activation attempt unsuccessful");
