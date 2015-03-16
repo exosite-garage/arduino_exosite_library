@@ -185,6 +185,9 @@ void loop() {
             Serial.print(F("Unknown Setting: "));
             Serial.println(tempString);
           }
+        } else if (alias == "msg"){
+          Serial.print("Message: ");
+          Serial.println(tempString);
         } else {
           Serial.println("Unknown Alias Dataport");
         }
