@@ -37,6 +37,9 @@
 //#define EXOSITEDEBUG 2
 //#define EXOSITEDEBUG 3
 
+// Enable Memory Debugging: (requires MemoryFree library)
+//#define EXOSITEDEBUGMEM
+
 #ifndef CIK_EEPROM_ADDRESS
   #define CIK_EEPROM_ADDRESS 0 //Takes Addresses 0 - 39 (dec)
 #endif
@@ -48,7 +51,7 @@
 #include <EEPROM.h>
 
 
-#if EXOSITEDEBUG > 2
+#ifdef EXOSITEDEBUGMEM
 #include <MemoryFree.h>
 #endif
 

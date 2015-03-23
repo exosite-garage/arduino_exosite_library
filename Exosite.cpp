@@ -184,7 +184,7 @@ boolean Exosite::writeRead(const char* writeString, const char* readString, char
 * One step read and write to Exosite using Arduino String objects.
 *=============================================================================*/
 boolean Exosite::writeRead(const String &writeString, const String &readString, String &returnString){
-  #if EXOSITEDEBUG > 2
+  #ifdef EXOSITEDEBUGMEM
     Serial.print(getFreeMemory());
     Serial.println(F(" = Free Memory String Start"));
     Serial.println(writeString);
@@ -196,7 +196,7 @@ boolean Exosite::writeRead(const String &writeString, const String &readString, 
   readCharString = (char*)malloc(sizeof(char) * readString.length()+1);
   returnCharString = (char*)malloc(sizeof(char) * 32);
 
-  #if EXOSITEDEBUG > 2
+  #ifdef EXOSITEDEBUGMEM
     Serial.print(getFreeMemory());
     Serial.println(F(" = Free Memory String Chars Allocated"));
     Serial.print(F("Return Address Before: "));
@@ -212,14 +212,14 @@ boolean Exosite::writeRead(const String &writeString, const String &readString, 
   readString.toCharArray(readCharString, readString.length()+1);
 
 
-  #if EXOSITEDEBUG > 2
+  #ifdef EXOSITEDEBUGMEM
     Serial.print(getFreeMemory());
     Serial.println(F(" = Free Memory String Start Char Write"));
   #endif
 
   if(this->writeRead(writeCharString, readCharString, &returnCharString)){
 
-    #if EXOSITEDEBUG > 2
+    #ifdef EXOSITEDEBUGMEM
       Serial.print(getFreeMemory());
       Serial.println(F(" = Free Memory String Char Write Finished"));
       Serial.print(F("Return Address After: "));
@@ -229,7 +229,7 @@ boolean Exosite::writeRead(const String &writeString, const String &readString, 
     returnString = String(returnCharString);
 
 
-    #if EXOSITEDEBUG > 2
+    #ifdef EXOSITEDEBUGMEM
       Serial.print(getFreeMemory());
       Serial.println(F(" = Free Memory String Chars Copied"));
     #endif
@@ -244,7 +244,7 @@ boolean Exosite::writeRead(const String &writeString, const String &readString, 
   free(returnCharString);
 
 
-  #if EXOSITEDEBUG > 2
+  #ifdef EXOSITEDEBUGMEM
     Serial.print(getFreeMemory());
     Serial.println(F(" = Free Memory String Chars Freed"));
   #endif
