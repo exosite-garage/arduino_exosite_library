@@ -442,8 +442,7 @@ boolean Exosite::fetchNVCIK(){
 * Gets the server time as a unix timestamp from m2.exosite.com/timestamp.
 *=============================================================================*/
 unsigned long Exosite::time(){
-  unsigned long timestamp;
-  ret = false;
+  unsigned long timestamp = 0;
   stringPos = 0;
   DataRx= false;
   timeout_time = 0;
@@ -497,7 +496,6 @@ unsigned long Exosite::time(){
           #endif
 
           if (strstr(rxdata, "HTTP/1.1 200 OK")) {
-            ret = true;
             varPtr = strstr(rxdata, "\r\n\r\n") + 4;
             Serial.print(F("Current Time is: "));
             Serial.println(varPtr);
@@ -508,8 +506,6 @@ unsigned long Exosite::time(){
             varPtr = strstr(rxdata, "\n");
             *varPtr = '\0';
             Serial.println(rxdata);
-
-            ret = false;
           }
 
           break;
@@ -530,7 +526,7 @@ unsigned long Exosite::time(){
     Serial.println(F("End of Time"));
   #endif
 
-  return ret;
+  return timestamp;
 }
 
 boolean Exosite::isHex(char *str, int len){
