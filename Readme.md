@@ -107,6 +107,10 @@ You will also need to remove `exosite.init();` and add `Ethernet.begin(macData);
 
 Release Info
 ============
+**v2.3.3 - Release 2015-04-20**
+ - Pushed missing commits from previous release.
+ - Put memory debugging stuff behind special ifdef.
+
 **v2.3.2 - Release 2015-03-05**
  - Added client->stop() before client->connect() to activate and timestamp too.
  - Clarified some serial debug statements.
