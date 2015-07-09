@@ -113,6 +113,4 @@ void loop(){
     movementCounter = 0;
     sendPrevTime = millis();
   }
-  // Use some datarule Lua Script of your choice to set the threshold for 
-  // the number of times motion detected results in an occupied room
 }
