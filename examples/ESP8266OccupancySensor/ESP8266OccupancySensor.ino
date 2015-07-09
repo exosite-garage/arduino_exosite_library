@@ -97,16 +97,16 @@ void setup(){
 *=============================================================================*/
 void loop(){
   static unsigned long sendPrevTime = 0;
-  // read the state of the motion sensor value:
+  // Read the state of the motion sensor value:
   motionState = digitalRead(MOTION_PIN);
-  // check if the motion sensor is activated
-  // if it is, the motionState is LOW (with 10K resistor):
+  // Check if the motion sensor is activated
+  // If it is, the motionState is LOW (with 10K resistor):
   if (motionState == LOW) {
     movementCounter++;
     Serial.println("Motion Detected.");
     delay(2000);
   }
-  //Send value to Exosite every REPORT_TIMEOUT milliseconds
+  // Send value to Exosite every REPORT_TIMEOUT milliseconds
   if (millis() - sendPrevTime > REPORT_TIMEOUT) {
     exosite.writeRead(writeString+String(movementCounter), readString, returnString);
     Serial.println(returnString);
