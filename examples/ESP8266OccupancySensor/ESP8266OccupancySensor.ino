@@ -108,7 +108,6 @@ void loop(){
   }
   //Send value to Exosite every REPORT_TIMEOUT milliseconds
   if (millis() - sendPrevTime > REPORT_TIMEOUT) {
-    //Only send "true" if motion detected certain number of times over last interval
     exosite.writeRead(writeString+String(movementCounter), readString, returnString);
     Serial.println(returnString);
     movementCounter = 0;
