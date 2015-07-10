@@ -27,11 +27,11 @@ ESP8266 Occupancy Sensor
 
 8. Click on the device you just created to open the Device Information window.
 
-9. Add the two datasources "uptime" and "command". (For Each)
+9. Add the two datasources "occupancyint" and "occupancy". (For Each)
 
 	1. Click "+ Add Data"
 
-	2. Give your device a human readable name (eg. "Device Uptime"), set it to format "string", set the alias ("uptime" and "command").
+	2. Give your dataports a human readable name (eg. "Motions Detected" and "Occupied?"), set both to format "integer", set the alias ("occupancyint" and "occupancy").
 
 10. Copy your new device's 40 character CIK from the Device Information window and paste it into line 47 of the example opened in step 4.
 
