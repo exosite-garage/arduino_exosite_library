@@ -8,7 +8,7 @@ License is BSD, Copyright 2013, Exosite LLC (see LICENSE file)
 
 Tested with Arduino 1.0.5 and 1.5.5
 
-![image](content/ArduinoUno_R3_Front_450px.jpg)
+![image](extras/ArduinoUno_R3_Front_450px.jpg)
 
 Help
 ====
