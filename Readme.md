@@ -107,6 +107,11 @@ You will also need to remove `exosite.init();` and add `Ethernet.begin(macData);
 
 Release Info
 ============
+**v2.3.4 - Release 2015-08-10**
+ - Fixed time() function, actually returns time now.
+ - Added example to use time().
+ - Added library.properties for new IDE versions.
+
 **v2.3.3 - Release 2015-04-20**
  - Pushed missing commits from previous release.
  - Put memory debugging stuff behind special ifdef.
