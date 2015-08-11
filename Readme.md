@@ -27,6 +27,18 @@ Requirements
 
 Installing
 ==========
+Arduino IDE v1.6.2 or greater
+-----------------------------
+
+Newer versions of the Arduino IDE include a Library Manager GUI that you can use to easily install the Exosite library. Simply open the Library Manager:
+![image](extras/LibraryManager_1.png) 
+ Next, search for and install the Exosite library:
+![image](extras/LibraryManager_Exosite.png)
+When updates are pushed to this repository, return to this interface if you would like to update the Exosite library to the newer version.
+
+Earlier versions of the Arduino IDE
+-----------------------------------
+
 The easiest way to install this library is to simply clone this repo straight to your libraries folder.
 
 ```
