@@ -39,7 +39,7 @@ When updates are pushed to this repository, return to this interface if you woul
 Earlier versions of the Arduino IDE
 -----------------------------------
 
-The easiest way to install this library is to simply clone this repo straight to your libraries folder.
+The easiest way to install this library with earlier versions of the Arduino IDE is to simply clone this repo straight to your libraries folder.
 
 ```
 cd ~/sketchbook/libraries
