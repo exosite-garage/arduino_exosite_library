@@ -427,11 +427,8 @@ boolean Exosite::fetchNVCIK(){
 
   if(strlen(tempBuf) == 40){
     strcpy(cik, tempBuf);
-    Serial.print(F("Read CIK: "));
-    Serial.println(cik);
     return true;
   }else{
-    Serial.println(F("Warning: No CIK in NV Memory."));
     return false;
   }
 }

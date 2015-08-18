@@ -119,9 +119,12 @@ You will also need to remove `exosite.init();` and add `Ethernet.begin(macData);
 
 Release Info
 ============
+**v2.3.5 - Release 2015-08-18**
+ - Removed `Serial.print()` statements in `fetchNVCIK()` to prevent printing to serial port before `Serial.begin()`
+
 **v2.3.4 - Release 2015-08-10**
- - Fixed time() function, actually returns time now.
- - Added example to use time().
+ - Fixed `time()` function, actually returns time now.
+ - Added example to use `time()`.
  - Added library.properties for new IDE versions.
 
 **v2.3.3 - Release 2015-04-20**
@@ -129,12 +132,12 @@ Release Info
  - Put memory debugging stuff behind special ifdef.
 
 **v2.3.2 - Release 2015-03-05**
- - Added client->stop() before client->connect() to activate and timestamp too.
+ - Added `client->stop()` before `client->connect()` to activate and timestamp too.
  - Clarified some serial debug statements.
  - Check that CIK is 40 hex characters on seemingly successful activation before blowing away old CIK.
 
 **v2.3.1 - Release 2014-09-17**
- - Added client->stop() before client->connect(), the Ethernet shield seems to need this or connect() does nothing.
+ - Added `client->stop()` before `client->connect()`, the Ethernet shield seems to need this or `connect()` does nothing.
 
 **v2.3.0 - Release 2014-09-11**
  - Added EEPROM includes back to all examples.
@@ -149,12 +152,12 @@ Release Info
    - Added Internal Functions to Read and Write CIK from EEPROM
 
 **v2.1.1 - Release 2013-11-04**
- - Removed depreciated 'readWrite' method to reduce confusion. 'readFromCloud' and 'sendToCloud' still supported.
+ - Removed depreciated `readWrite` method to reduce confusion. `readFromCloud` and `sendToCloud` still supported.
 
 **v2.1 - Release 2013-11-01**
- - Changed 'readWrite' to 'writeRead' to reflect parameter order and platform operation order.
+ - Changed `readWrite` to `writeRead` to reflect parameter order and platform operation order.
  - Added User-Agent String
- - Added client->flush() just before sending HTTP packet, just in case we received something
+ - Added `client->flush()` just before sending HTTP packet, just in case we received something
 
 **v2.0 - Release 2013-10-18**
  - Simplified interface to use character strings or Arduino Strings instead of arrays of character arrays. User must now URL encode and decode their own data.
