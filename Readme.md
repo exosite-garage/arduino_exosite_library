@@ -81,11 +81,11 @@ writeRead
 ---------
 
 ```cpp
-boolean Exosite::writeRead(char* writeString, char* readString, char** returnString)
+boolean Exosite::writeRead(char* writeString, char* readString, char** returnString);
 ```
 
 ```cpp
-boolean Exosite::writeRead(String writeString, String readString, String &returnString)
+boolean Exosite::writeRead(String writeString, String readString, String &returnString);
 ```
 
 `writeString`: This sets the values to write to certain datasources. eg. "alias3=value3&alias4=value4"
@@ -106,6 +106,19 @@ boolean Exosite::provision(char* vendorString, char* modelString, char* snString
 
 `snString`: The string that identifies the device's serial number.
 
+ESP8266 Only
+------------
+
+```cpp
+void Exosite::begin();
+```
+
+To be used after `EEPROM.begin()` to allow for proper device provisioning.
+
+Use only if using the following constructor:
+```cpp
+Exosite(Client *_client);
+```
 
 Migration from V1
 =================
@@ -119,6 +132,9 @@ You will also need to remove `exosite.init();` and add `Ethernet.begin(macData);
 
 Release Info
 ============
+**v2.3.6 - Release 2015-09-03**
+ - Add method `Exosite::begin()` for ESP8266 boards only to be used after `EEPROM.begin()` to fix provisioning scenarios
+
 **v2.3.5 - Release 2015-08-18**
  - Removed `Serial.print()` statements in `fetchNVCIK()` to prevent printing to serial port before `Serial.begin()`
 

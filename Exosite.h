@@ -30,7 +30,7 @@
 
 
 #define serverName          "m2.exosite.com"
-#define ACTIVATOR_VERSION   F("2.3.4")
+#define ACTIVATOR_VERSION   F("2.3.6")
 
 // Select a Debug Level: 
 //#define EXOSITEDEBUG 1
@@ -82,6 +82,10 @@ class Exosite
     Exosite(Client *_client);
     Exosite(const char *_cik, Client *_client);
     Exosite(const String _cik, Client *_client);
+
+    #if defined(ESP8266)
+    void begin();
+    #endif
 
     // Current Methods
     boolean writeRead(const char* writeString,const char* readString, char** returnString);

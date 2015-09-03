@@ -35,7 +35,9 @@
 Exosite::Exosite(Client *_client)
 {
   client = _client;
+  #if !defined(ESP8266)
   fetchNVCIK();
+  #endif
 }
 
 Exosite::Exosite(const char *_cik, Client *_client)
@@ -50,6 +52,11 @@ Exosite::Exosite(const String _cik, Client *_client)
   client = _client;
 }
 
+#if defined(ESP8266)
+void Exosite::begin(){
+  fetchNVCIK();
+}
+#endif
 /*==============================================================================
 * writeRead
 *
