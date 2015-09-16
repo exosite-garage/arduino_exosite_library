@@ -18,6 +18,7 @@ readFromCloud	KEYWORD2
 writeRead		KEYWORD2
 provision		KEYWORD2
 time			KEYWORD2
+begin			KEYWORD2
 
 #######################################
 # Instances (KEYWORD2)
