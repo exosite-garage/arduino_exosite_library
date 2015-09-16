@@ -60,4 +60,4 @@ For more information on this project and other examples, checkout our Exosite Ga
 
 Schematic
 =========
-![image](extras/esp8266occupancyschematic.png)
+![image](esp8266occupancyschematic.png)
