@@ -56,3 +56,8 @@ ESP8266 Occupancy Sensor
 17. Create some Lua script datarule of your own design to set the amount of motions detected in an interval result in an "occupied" room. See the community form post above for an example.
 
 For more information on this project and other examples, checkout our Exosite Garage github page at http://exosite-garage.github.com
+
+
+Schematic
+=========
+![image](extras/esp8266occupancyschematic.png)
