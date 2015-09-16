@@ -132,7 +132,7 @@ You will also need to remove `exosite.init();` and add `Ethernet.begin(macData);
 
 Release Info
 ============
-**v2.3.7 - Release 2015-09-16
+**v2.3.7 - Release 2015-09-16**
  - Make ESP8266OccupancySensor example use provisioning and update readme
 
 **v2.3.6 - Release 2015-09-03**
