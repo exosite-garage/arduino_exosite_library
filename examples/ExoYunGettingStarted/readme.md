@@ -31,7 +31,7 @@ for activation instead of the Arduino Compatible Ethernet example that generates
 	6. Hit the 'Quit' button on the final window that says "Your Arduino Yún Compatible Device was successfully enabled with the CIK..."
 	
 
-11. Power your Arduino Yún using the USB cable connected to your computer or using a power adapter and follow the Yún instructions for connecting to your network via Ethernet or WiFi.  [Arduino Yún Platform Information](http://arduino.cc/en/Main/ArduinoBoardYun)
+11. Power your Arduino Yún using the USB cable connected to your computer or using a power adapter and follow the Yún instructions for connecting to your network WiFi or connect an Ethernet cable.  [Arduino Yún Getting Started -- WiFi Configuration](https://www.arduino.cc/en/Guide/ArduinoYun#toc14)
 
 12. Go to "Tools->Serial" to select the serial port your Arduino Yún board is connected to
 
