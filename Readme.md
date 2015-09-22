@@ -106,14 +106,14 @@ boolean Exosite::provision(char* vendorString, char* modelString, char* snString
 
 `snString`: The string that identifies the device's serial number.
 
-ESP8266 Only
-------------
+begin (ESP8266 Only)
+--------------------
 
 ```cpp
 void Exosite::begin();
 ```
 
-To be used after `EEPROM.begin()` to allow for proper device provisioning.
+Must be called before any other library calls, but after `EEPROM.begin()` when using provisioning.
 
 Use only if using the following constructor:
 ```cpp
