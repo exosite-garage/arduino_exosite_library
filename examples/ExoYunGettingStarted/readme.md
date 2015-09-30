@@ -56,6 +56,7 @@ The Exosite Arduino Library is provided to help developers quickly evaluate Exos
 	5. Hit 'Continue' button.
 	 
 	![image](extras/add-dev-yun-mac.png)
+	
 	6. Hit the 'Quit' button on the final window that says "Your Arduino Yún Compatible Device was successfully enabled with the CIK..."
 	
 	![image](extras/add-device-done.png)
