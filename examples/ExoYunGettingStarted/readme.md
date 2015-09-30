@@ -26,10 +26,10 @@ The Exosite Arduino Library is provided to help developers quickly evaluate Exos
 ### Configure your Yún's networking
 11. Power your Arduino Yún using the USB cable connected to your computer or using a power adapter and follow the Yún instructions for connecting to your network WiFi or connect an Ethernet cable.  [Arduino Yún Getting Started -- WiFi Configuration](https://www.arduino.cc/en/Guide/ArduinoYun#toc14)
 
-    * Note: The Yun, if connected by Ethernet can be found by going to [arduino.local](arduino.local) in your web browser - although recommend using the Arduino WiFi Configuration Guide.
+    * Note: The Yun, if connected by Ethernet can be found by going to [arduino.local](arduino.local) in your web browser - although recommend using the [Arduino Yun WiFi Configuration Guide](https://www.arduino.cc/en/Guide/ArduinoYun#toc14).
 
- ![image](extras/finding_arduino_on_network.png)
- ![image](extras/setting-yun-wifi-config.png)
+   ![image](extras/finding_arduino_on_network.png)
+   ![image](extras/setting-yun-wifi-config.png)
  
 
 ### Set up your Yún on Exosite's Portals Visualization Tool 
@@ -41,17 +41,23 @@ The Exosite Arduino Library is provided to help developers quickly evaluate Exos
 6. Once logged in, Go to the Devices page ([https://portals.exosite.com/manage/devices](https://portals.exosite.com/manage/devices)) and add a device
 
 	1. Click on "+ Add Device"
+	
 	![image](extras/add-device.png)
+	
 	2. Select "Select a supported device below."
 	
 	3. Select "Arduino Yún Compatible" device type from drop down list
 	4. Click 'Continue' button.	
+	
 	![image](extras/add-device-yun-type.png)
+	
 	3. **IMPORTANT**: Enter your WiFi MAC Address.  You can get this either from the Yún's web server page ('Set up your Yun' above) or if you run this sketch, it will print it out at boot time.  It should be in the format 00:11:AA:BB:22:CC (capital letters and use colons).  Note: If you use something other than your Yún's WiFi MAC Address, the device won't activate.
 	4. Name your device, anything you want.  Leave the device location field empty, it is optional.
 	5. Hit 'Continue' button.
+	 
 	![image](extras/add-dev-yun-mac.png)
 	6. Hit the 'Quit' button on the final window that says "Your Arduino Yún Compatible Device was successfully enabled with the CIK..."
+	
 	![image](extras/add-device-done.png)
 	
 ### Program the Yun
