@@ -92,6 +92,9 @@ The Exosite Arduino Library is provided to help developers quickly evaluate Exos
 
 
 ##Notes
+#### Help
+If you are running into problems, please feel free to check out our [developer community forum](https://community.exosite.com/c/hardware-platforms) or use our [support site](https://support.exosite.com).
+
 
 #### Using the Yún compared to Arduino with Ethernet Shield with Exosite
 Exosite has created a separate reference Yún device type for a couple of reasons.
