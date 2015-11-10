@@ -108,7 +108,7 @@ boolean Exosite::writeRead(const char* writeString, const char* readString, char
       Serial.println(F("Sent"));
     #endif
     
-    while ((timeout_time > time_now) && RxLoop) {
+    while ((timeout_time > time_now) && RxLoop && stringPos < 200) {
       if (client->available()) {
         if (!DataRx)
           DataRx= true;
@@ -173,6 +173,11 @@ boolean Exosite::writeRead(const char* writeString, const char* readString, char
 
     if(timeout_time <= time_now){
       Serial.println(F("Error: HTTP Response Timeout"));
+    }
+
+    if(stringPos >= 199){
+      Serial.println(F("Received too Much Content Failing"));
+      return false;
     }
   }else{
     Serial.println(F("Error: Can't Open Connection to Exosite."));
@@ -329,7 +334,7 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
       Serial.println(writeString);
     #endif
     
-    while ((timeout_time > time_now)) {
+    while ((timeout_time > time_now) && RxLoop && stringPos < 200) {
       if (client->available()) {
         if (!DataRx)
           DataRx= true;
@@ -384,11 +389,17 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
       }
       time_now = millis();
     }
+
     #ifdef EXOSITEDEBUG
       if(timeout_time <= time_now){
         Serial.println(F("HTTP Response Timeout"));
       }
     #endif
+
+      if(stringPos >= 199){
+        Serial.println(F("Received too Much Content Failing"));
+        return false;
+      }
   }else{
     Serial.println(F("Error: Can't Open Connection to Exosite."));
   }
@@ -481,7 +492,7 @@ unsigned long Exosite::time(){
       Serial.print(F("Sent"));
     #endif
     
-    while ((timeout_time > time_now)) {
+    while ((timeout_time > time_now) && RxLoop && stringPos < 200) {
       if (client->available()) {
         if (!DataRx)
           DataRx= true;
@@ -517,11 +528,17 @@ unsigned long Exosite::time(){
       }
       time_now = millis();
     }
+
     #ifdef EXOSITEDEBUG
       if(timeout_time <= time_now){
         Serial.println(F("HTTP Response Timeout"));
       }
     #endif
+
+      if(stringPos >= 199){
+        Serial.println(F("Received too Much Content Failing"));
+        return 0;
+      }
   }else{
     Serial.println(F("Error: Can't Open Connection to Exosite."));
   }
