@@ -140,6 +140,10 @@ You will also need to remove `exosite.init();` and add `Ethernet.begin(macData);
 
 Release Info
 ============
+**v2.3.8 - Release 2015-11-12**
+ - Stability Fixes -- Handles large responses without crashing.
+ - Add YunTimestamp Example
+
 **v2.3.7 - Release 2015-09-16**
  - Make ESP8266OccupancySensor example use provisioning and update readme
 
