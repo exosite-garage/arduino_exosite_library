@@ -288,6 +288,7 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
   ret = false;
   stringPos = 0;
   DataRx= false;
+  RxLoop = true;
   timeout_time = 0;
   time_now = 0;
   timeout = 3000; // 3 seconds
@@ -490,6 +491,7 @@ unsigned long Exosite::time(){
   unsigned long timestamp = 0;
   stringPos = 0;
   DataRx= false;
+  RxLoop = true;
   timeout_time = 0;
   time_now = 0;
   timeout = 3000; // 3 seconds
