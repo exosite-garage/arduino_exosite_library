@@ -106,6 +106,14 @@ boolean Exosite::provision(char* vendorString, char* modelString, char* snString
 
 `snString`: The string that identifies the device's serial number.
 
+time
+---------
+```cpp
+unsigned long Exosite:time();
+```
+
+Returns the current time as a unix timestamp (number of seconds since 1970-01-01) or 0 for error.
+
 begin (ESP8266 Only)
 --------------------
 
