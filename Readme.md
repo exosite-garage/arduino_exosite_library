@@ -142,6 +142,7 @@ Release Info
 ============
 **v2.3.8 - Release 2015-11-12**
  - Stability Fixes -- Handles large responses without crashing.
+   * Thanks to @keith_fisk on our community forums for debugging & reporting this.
  - Add YunTimestamp Example
 
 **v2.3.7 - Release 2015-09-16**
