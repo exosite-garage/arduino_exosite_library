@@ -176,7 +176,22 @@ boolean Exosite::writeRead(const char* writeString, const char* readString, char
     }
 
     if(stringPos >= 199){
-      Serial.println(F("Received too Much Content Failing"));
+      Serial.println(F("Received too Much Content, Failing"));
+
+        #if EXOSITEDEBUG > 2
+          Serial.println("Received So Far");
+          Serial.println(rxdata);
+          Serial.println("Also Received:");
+        #endif
+
+      while (client->available()) {
+        c = client->read();
+
+        #if EXOSITEDEBUG > 2
+          Serial.write(c);
+        #endif
+      }
+
       return false;
     }
   }else{
@@ -396,10 +411,25 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
       }
     #endif
 
-      if(stringPos >= 199){
-        Serial.println(F("Received too Much Content Failing"));
-        return false;
+    if(stringPos >= 199){
+      Serial.println(F("Received too Much Content, Failing"));
+
+        #if EXOSITEDEBUG > 2
+          Serial.println("Received So Far");
+          Serial.println(rxdata);
+          Serial.println("Also Received:");
+        #endif
+
+      while (client->available()) {
+        c = client->read();
+
+        #if EXOSITEDEBUG > 2
+          Serial.write(c);
+        #endif
       }
+
+      return false;
+    }
   }else{
     Serial.println(F("Error: Can't Open Connection to Exosite."));
   }
@@ -501,6 +531,10 @@ unsigned long Exosite::time(){
         rxdata[stringPos] = c;
         
         stringPos += 1;
+
+        #if EXOSITEDEBUG > 2
+          Serial.write(c);
+        #endif
       } else {
         rxdata[stringPos] = 0;
 
@@ -535,10 +569,25 @@ unsigned long Exosite::time(){
       }
     #endif
 
-      if(stringPos >= 199){
-        Serial.println(F("Received too Much Content Failing"));
-        return 0;
+    if(stringPos >= 199){
+      Serial.println(F("Received too Much Content, Failing"));
+
+        #if EXOSITEDEBUG > 2
+          Serial.println("Received So Far");
+          Serial.println(rxdata);
+          Serial.println("Also Received:");
+        #endif
+
+      while (client->available()) {
+        c = client->read();
+
+        #if EXOSITEDEBUG > 2
+          Serial.write(c);
+        #endif
       }
+
+      return false;
+    }
   }else{
     Serial.println(F("Error: Can't Open Connection to Exosite."));
   }
