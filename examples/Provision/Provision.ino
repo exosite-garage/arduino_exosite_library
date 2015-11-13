@@ -51,6 +51,7 @@ class YunClient client;
 Exosite exosite(&client);
 
 char macString[18];  // Used to store a formatted version of the MAC Address
+char ipString[18];  // Used to store a formatted version of the MAC Address
 
 /*==============================================================================
 * setup
@@ -63,10 +64,13 @@ void setup(){
   Serial.println("Boot");
   
   getYunMAC(macString, 18);
+  getYunIP(ipString, 18);
   
   // Print Some Useful Info
   Serial.print(F("MAC Address: "));
   Serial.println(macString);
+  Serial.print(F("IP Address: "));
+  Serial.println(ipString);
 }
 
 /*==============================================================================
@@ -112,5 +116,16 @@ void getYunMAC(char* MACptr, byte bufSize) {
   for(int i = 0; i < (bufSize-1) && p.available() > 0; i++) {
     MACptr[i] = p.read();
     MACptr[i+1] = 0;
+  }
+}
+
+
+void getYunIP(char* IPptr, byte bufSize) {
+  Process d;    // Create a process and call it "d"
+  d.runShellCommand("/sbin/ifconfig wlan0 | /bin/grep 'inet addr:' | cut -d: -f2 | /usr/bin/awk '{ print $1}'  ");
+
+  for(int i = 0; i < (bufSize-1) && d.available() > 0; i++) {
+    IPptr[i] = d.read();
+    IPptr[i+1] = 0;
   }
 }
