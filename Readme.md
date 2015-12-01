@@ -140,6 +140,10 @@ You will also need to remove `exosite.init();` and add `Ethernet.begin(macData);
 
 Release Info
 ============
+**v2.3.9 - Release 2015-12-01**
+ - Add IP info to Provision example.
+ - Fix release process problems.
+
 **v2.3.8 - Release 2015-11-12**
  - Stability Fixes -- Handles large responses without crashing.
    * Thanks to @keith_fisk on our community forums for debugging & reporting this.
