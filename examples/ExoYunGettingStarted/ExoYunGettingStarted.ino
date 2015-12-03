@@ -41,7 +41,7 @@
 #include <EEPROM.h>
 #include <SPI.h>
 #include <Bridge.h>
-#include <YunClient.h>
+#include <BridgeClient.h>
 #include <Exosite.h>
 #include <Process.h>
 //#include <Console.h>
@@ -60,7 +60,7 @@ const unsigned char reprovisionAfter = 3;
 * End of Configuration Variables
 *=============================================================================*/
 
-class YunClient client;
+class BridgeClient client;
 Exosite exosite(&client);
 
 unsigned char errorCount = reprovisionAfter;  // Force Provision On First Loop
