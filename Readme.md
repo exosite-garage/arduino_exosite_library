@@ -140,6 +140,9 @@ You will also need to remove `exosite.init();` and add `Ethernet.begin(macData);
 
 Release Info
 ============
+**v2.3.10 - Release 2015-12-04**
+ - Fix instantiating *Class objects in examples.
+
 **v2.3.9 - Release 2015-12-01**
  - Add IP info to Provision example.
  - Fix release process problems.
