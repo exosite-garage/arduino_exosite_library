@@ -63,7 +63,7 @@ const unsigned char reprovisionAfter = 3;
 unsigned char errorCount = reprovisionAfter;  // Force Provision On First Loop
 char macString[18];  // Used to store a formatted version of the MAC Address
 
-class EthernetClient client;
+EthernetClient client;
 Exosite exosite(&client);
 
 String tempString;

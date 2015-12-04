@@ -68,7 +68,7 @@ const char* Opto_Aliases[4] = {"OI1", "OI2", "OI3", "OI4"};
 
 //global variables    
 
-class EthernetClient client;
+EthernetClient client;
 Exosite exosite(&client);
 
 unsigned long last_millis = 0;

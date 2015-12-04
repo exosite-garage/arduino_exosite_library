@@ -47,7 +47,7 @@ byte macData[] = { 0x90, 0xA2, 0xDA, 0x00, 0x00, 0x00 };
 char macString[18];  // Used to store a formatted version of the MAC Address
 unsigned long time;
 
-class EthernetClient client;
+EthernetClient client;
 Exosite exosite(&client);
 
 /*==============================================================================

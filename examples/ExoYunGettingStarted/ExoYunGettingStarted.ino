@@ -60,7 +60,7 @@ const unsigned char reprovisionAfter = 3;
 * End of Configuration Variables
 *=============================================================================*/
 
-class YunClient client;
+YunClient client;
 Exosite exosite(&client);
 
 unsigned char errorCount = reprovisionAfter;  // Force Provision On First Loop

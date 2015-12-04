@@ -47,7 +47,7 @@
 /*==============================================================================
 * End of Configuration Variables
 *=============================================================================*/
-class YunClient client;
+YunClient client;
 Exosite exosite(&client);
 
 char macString[18];  // Used to store a formatted version of the MAC Address

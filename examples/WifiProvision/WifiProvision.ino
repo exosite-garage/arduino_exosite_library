@@ -56,7 +56,7 @@ char macString[18];  // Used to store a formatted version of the MAC Address
 byte macData[WL_MAC_ADDR_LENGTH];
 
 int status = WL_IDLE_STATUS;
-class WiFiClient client;
+WiFiClient client;
 Exosite exosite(&client);
 
 /*==============================================================================

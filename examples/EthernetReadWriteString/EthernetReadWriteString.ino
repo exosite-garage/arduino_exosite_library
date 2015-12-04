@@ -49,7 +49,7 @@ String returnString;
 * End of Configuration Variables
 *=============================================================================*/
 
-class EthernetClient client;
+EthernetClient client;
 Exosite exosite(cikData, &client);
 
 /*==============================================================================

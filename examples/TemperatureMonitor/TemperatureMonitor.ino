@@ -70,7 +70,7 @@ byte macData[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};        // <-- FILL IN YOU
 * End of Configuration Variables
 *=============================================================================*/
 
-class EthernetClient client;
+EthernetClient client;
 Exosite exosite(cikData, &client);
 
 //

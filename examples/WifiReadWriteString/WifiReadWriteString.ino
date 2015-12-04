@@ -51,7 +51,7 @@ String returnString;
 *=============================================================================*/
 
 int status = WL_IDLE_STATUS;
-class WiFiClient client;
+WiFiClient client;
 Exosite exosite(cikData, &client);
 
 /*==============================================================================

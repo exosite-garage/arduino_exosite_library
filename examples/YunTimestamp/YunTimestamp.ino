@@ -42,7 +42,7 @@
 unsigned long time;
 char macString[18];  // Used to store a formatted version of the MAC Address
 
-class YunClient client;
+YunClient client;
 Exosite exosite(&client);
 
 
