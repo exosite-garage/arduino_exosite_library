@@ -173,6 +173,7 @@ boolean Exosite::writeRead(const char* writeString, const char* readString, char
 
     if(timeout_time <= time_now){
       Serial.println(F("Error: HTTP Response Timeout"));
+      client->stop();
     }
 
     if(stringPos >= 199){
@@ -406,11 +407,14 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
       time_now = millis();
     }
 
-    #ifdef EXOSITEDEBUG
+
       if(timeout_time <= time_now){
+#ifdef EXOSITEDEBUG
         Serial.println(F("HTTP Response Timeout"));
+#endif
+        client->stop();
       }
-    #endif
+
 
     if(stringPos >= 199){
       Serial.println(F("Received too Much Content, Failing"));
@@ -565,11 +569,14 @@ unsigned long Exosite::time(){
       time_now = millis();
     }
 
-    #ifdef EXOSITEDEBUG
+    
       if(timeout_time <= time_now){
+#ifdef EXOSITEDEBUG
         Serial.println(F("HTTP Response Timeout"));
+#endif
+        client->stop();
       }
-    #endif
+   
 
     if(stringPos >= 199){
       Serial.println(F("Received too Much Content, Failing"));
