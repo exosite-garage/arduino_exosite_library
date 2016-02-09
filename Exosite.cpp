@@ -85,19 +85,19 @@ boolean Exosite::writeRead(const char* writeString, const char* readString, char
     Serial.println(F("Connected"));
 
     // Send request using Exosite basic HTTP API
-    client->print(F("POST /onep:v1/stack/alias?"));
+    client->print(G("POST /onep:v1/stack/alias?"));
     client->print(readString);
-    client->println(F(" HTTP/1.1"));
-    client->println(F("Host: m2.exosite.com"));
-    client->print(F("User-Agent: Exosite-Activator/"));
+    client->println(G(" HTTP/1.1"));
+    client->println(G("Host: m2.exosite.com"));
+    client->print(G("User-Agent: Exosite-Activator/"));
     client->print(ACTIVATOR_VERSION);
-    client->print(F(" Arduino/"));
+    client->print(G(" Arduino/"));
     client->println(ARDUINO);
-    client->print(F("X-Exosite-CIK: ")); 
+    client->print(G("X-Exosite-CIK: "));
     client->println(cik);
-    client->println(F("Accept: application/x-www-form-urlencoded; charset=utf-8"));
-    client->println(F("Content-Type: application/x-www-form-urlencoded; charset=utf-8"));
-    client->print(F("Content-Length: "));
+    client->println(G("Accept: application/x-www-form-urlencoded; charset=utf-8"));
+    client->println(G("Content-Type: application/x-www-form-urlencoded; charset=utf-8"));
+    client->print(G("Content-Length: "));
     client->println(strlen(writeString)); //calculate length
     client->println();
     client->println(writeString);
@@ -332,14 +332,14 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
     Serial.println(F("Connected"));
 
     // Send request using Exosite basic HTTP API
-    client->println(F("POST /provision/activate HTTP/1.1"));
-    client->println(F("Host: m2.exosite.com"));
-    client->print(F("User-Agent: Exosite-Activator/"));
+    client->println(G("POST /provision/activate HTTP/1.1"));
+    client->println(G("Host: m2.exosite.com"));
+    client->print(G("User-Agent: Exosite-Activator/"));
     client->print(ACTIVATOR_VERSION);
-    client->print(F(" Arduino/"));
+    client->print(G(" Arduino/"));
     client->println(ARDUINO);
-    client->println(F("Content-Type: application/x-www-form-urlencoded; charset=utf-8"));
-    client->print(F("Content-Length: "));
+    client->println(G("Content-Type: application/x-www-form-urlencoded; charset=utf-8"));
+    client->print(G("Content-Length: "));
     client->println(strlen(writeString)); //calculate length
     client->println();
     client->println(writeString);
@@ -513,11 +513,11 @@ unsigned long Exosite::time(){
     Serial.println(F("Connected"));
 
     // Send request using Exosite basic HTTP API
-    client->println(F("GET /timestamp HTTP/1.1"));
-    client->println(F("Host: m2.exosite.com"));
-    client->print(F("User-Agent: Exosite-Activator/"));
+    client->println(G("GET /timestamp HTTP/1.1"));
+    client->println(G("Host: m2.exosite.com"));
+    client->print(G("User-Agent: Exosite-Activator/"));
     client->print(ACTIVATOR_VERSION);
-    client->print(F(" Arduino/"));
+    client->print(G(" Arduino/"));
     client->println(ARDUINO);
     client->println();
 

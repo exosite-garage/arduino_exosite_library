@@ -28,14 +28,21 @@
 #ifndef Exosite_h
 #define Exosite_h
 
-
 #define serverName          "m2.exosite.com"
-#define ACTIVATOR_VERSION   F("2.3.10")
+#define ACTIVATOR_VERSION   "2.3.10"
 
 // Select a Debug Level: 
 //#define EXOSITEDEBUG 1
 //#define EXOSITEDEBUG 2
 //#define EXOSITEDEBUG 3
+
+// Enable or Disable Direct from ROM Sending
+// Disabled on ESP because of performance issue and lack of need.
+#if defined(ESP8266) or defined(NO_FLASH_NET_STRINGS)
+    #define G(x) x
+#else
+    #define G(x) F(x)
+#endif
 
 // Enable Memory Debugging: (requires MemoryFree library)
 //#define EXOSITEDEBUGMEM
