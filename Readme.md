@@ -140,6 +140,10 @@ You will also need to remove `exosite.init();` and add `Ethernet.begin(macData);
 
 Release Info
 ============
+**v2.3.11 - Release 2016-04-05**
+ - Close socket on HTTP timeout.
+ - Add method to disable flash strings, workaround for slowness due to packet-per-byte issue.
+
 **v2.3.10 - Release 2015-12-04**
  - Fix instantiating *Class objects in examples.
 
