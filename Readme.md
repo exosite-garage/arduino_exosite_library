@@ -77,6 +77,15 @@ Exosite(String _cik, Client *_client);
 
 `_client`: This is the interface to what ever network device you're using. Must be a subclass of [`Client`](http://arduino.cc/en/Reference/ClientConstructor) such as: [`EthernetClient`](http://arduino.cc/en/Reference/EthernetClient), [`WiFiClient`](http://arduino.cc/en/Reference/WiFiClient), or [`YunClient`](http://arduino.cc/en/Reference/YunClientConstructor).
 
+setDomain
+---------
+
+```cpp
+void setDomain(const char *domain);
+```
+
+`domain`: Custom domain to connect to on next connection. eg. "myprod.m2.exosite.com"
+
 writeRead
 ---------
 
