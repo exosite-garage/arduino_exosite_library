@@ -28,7 +28,7 @@
 #ifndef Exosite_h
 #define Exosite_h
 
-#define ACTIVATOR_VERSION   "2.3.11"
+#define ACTIVATOR_VERSION   "2.4.0"
 
 // Select a Debug Level: 
 //#define EXOSITEDEBUG 1
