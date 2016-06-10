@@ -57,6 +57,17 @@ void Exosite::begin(){
   fetchNVCIK();
 }
 #endif
+
+/*==============================================================================
+* setDomain
+*
+* set a custom domain to contact
+*=============================================================================*/
+void Exosite::setDomain(const char *domain)
+{
+  serverName = domain;
+}
+
 /*==============================================================================
 * writeRead
 *
@@ -88,7 +99,8 @@ boolean Exosite::writeRead(const char* writeString, const char* readString, char
     client->print(G("POST /onep:v1/stack/alias?"));
     client->print(readString);
     client->println(G(" HTTP/1.1"));
-    client->println(G("Host: m2.exosite.com"));
+    client->print(G("Host: "));
+    client->println(serverName);
     client->print(G("User-Agent: Exosite-Activator/"));
     client->print(ACTIVATOR_VERSION);
     client->print(G(" Arduino/"));
@@ -333,7 +345,8 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
 
     // Send request using Exosite basic HTTP API
     client->println(G("POST /provision/activate HTTP/1.1"));
-    client->println(G("Host: m2.exosite.com"));
+    client->print(G("Host: "));
+    client->println(serverName);
     client->print(G("User-Agent: Exosite-Activator/"));
     client->print(ACTIVATOR_VERSION);
     client->print(G(" Arduino/"));
@@ -489,7 +502,7 @@ boolean Exosite::fetchNVCIK(){
 /*==============================================================================
 * time
 *
-* Gets the server time as a unix timestamp from m2.exosite.com/timestamp.
+* Gets the server time as a unix timestamp.
 *=============================================================================*/
 unsigned long Exosite::time(){
   unsigned long timestamp = 0;
@@ -514,7 +527,8 @@ unsigned long Exosite::time(){
 
     // Send request using Exosite basic HTTP API
     client->println(G("GET /timestamp HTTP/1.1"));
-    client->println(G("Host: m2.exosite.com"));
+    client->print(G("Host: "));
+    client->println(serverName);
     client->print(G("User-Agent: Exosite-Activator/"));
     client->print(ACTIVATOR_VERSION);
     client->print(G(" Arduino/"));
