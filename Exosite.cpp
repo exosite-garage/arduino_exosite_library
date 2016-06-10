@@ -52,6 +52,11 @@ Exosite::Exosite(const String _cik, Client *_client)
   client = _client;
 }
 
+/*==============================================================================
+* begin
+*
+* cik must be fetched after initialization on ESP8266
+*=============================================================================*/
 #if defined(ESP8266)
 void Exosite::begin(){
   fetchNVCIK();
