@@ -149,6 +149,12 @@ You will also need to remove `exosite.init();` and add `Ethernet.begin(macData);
 
 Release Info
 ============
+**v2.5.2 - Release 2016-06-15**
+ - Re-release for versioning problems.
+
+**v2.5.1 - Release 2016-06-14**
+ - Bugfix for "Murano-SmartLightBulb-ThingDevBoard".
+
 **v2.5.0 - Release 2016-06-10**
  - Add "Murano-SmartLightBulb-ThingDevBoard" example.
 
