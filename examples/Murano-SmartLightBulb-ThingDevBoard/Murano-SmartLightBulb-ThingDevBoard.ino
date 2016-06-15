@@ -282,7 +282,7 @@ void connectWifi() {
   int delays = 0;
   while (WiFi.status() != WL_CONNECTED) {
     Serial.print(".");
-    delay++;
+    delays++;
     if (delays > 30)
       Serial.println("");
     // Blink the LED
