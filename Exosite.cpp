@@ -2,20 +2,20 @@
 //
 // exosite.cpp - Prototypes for the Exosite Cloud API
 //
-// Copyright (c) 2012 Exosite LLC.  All rights reserved.
-// 
-// Redistribution and use in source and binary forms, with or without 
+// Copyright (c) 2012-2016 Exosite LLC.  All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
 
 //  * Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-//  * Redistributions in binary form must reproduce the above copyright 
+//  * Redistributions in binary form must reproduce the above copyright
 //    notice, this list of conditions and the following disclaimer in the
 //    documentation and/or other materials provided with the distribution.
 //  * Neither the name of Exosite LLC nor the names of its contributors may
-//    be used to endorse or promote products derived from this software 
+//    be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
 // NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -26,6 +26,14 @@
 //*****************************************************************************
 
 #include "Exosite.h"
+#include "Arduino.h"
+
+#ifdef CC3200
+extern "C" {
+  #include "utility/wl_definitions.h"
+  #include "utility/socket.h"
+}
+#endif
 
 /*==============================================================================
 * Exosite
@@ -35,9 +43,9 @@
 Exosite::Exosite(Client *_client)
 {
   client = _client;
-  #if !defined(ESP8266)
+#if !defined(ESP8266) && !defined(CC3200)
   fetchNVCIK();
-  #endif
+#endif
 }
 
 Exosite::Exosite(const char *_cik, Client *_client)
@@ -57,7 +65,7 @@ Exosite::Exosite(const String _cik, Client *_client)
 *
 * cik must be fetched after initialization on ESP8266
 *=============================================================================*/
-#if defined(ESP8266)
+#if defined(ESP8266) || defined(CC3200)
 void Exosite::begin(){
   fetchNVCIK();
 }
@@ -93,7 +101,11 @@ boolean Exosite::writeRead(const char* writeString, const char* readString, char
   if (!client->connected()) {
     Serial.print("No Existing Connection, Opening One...");
     client->stop();
+#ifdef CC3200
+    client->sslConnect(serverName,80);
+#else /*CC3200*/
     client->connect(serverName,80);
+#endif /*CC3200*/
   }
 
   if (client->connected()) {
@@ -124,19 +136,19 @@ boolean Exosite::writeRead(const char* writeString, const char* readString, char
     #if EXOSITEDEBUG > 1
       Serial.println(F("Sent"));
     #endif
-    
+
     while ((timeout_time > time_now) && RxLoop && stringPos < 200) {
       if (client->available()) {
         if (!DataRx)
           DataRx= true;
-        
+
         c = client->read();
         rxdata[stringPos] = c;
 
         #if EXOSITEDEBUG > 2
           Serial.print(c);
         #endif
-        
+
         stringPos += 1;
       } else {
         #if EXOSITEDEBUG > 4
@@ -152,12 +164,12 @@ boolean Exosite::writeRead(const char* writeString, const char* readString, char
               Serial.println("HTTP Response:");
               Serial.println(rxdata);
             #endif
-  
+
           if (strstr(rxdata, "HTTP/1.1 200 OK")) {
             #ifdef EXOSITEDEBUG
               Serial.println(F("HTTP Status: 200"));
             #endif
-  
+
             ret = true;
             varPtr = strstr(rxdata, "\r\n\r\n") + 4;
 
@@ -171,7 +183,7 @@ boolean Exosite::writeRead(const char* writeString, const char* readString, char
             #ifdef EXOSITEDEBUG
               Serial.println(F("HTTP Status: 204"));
             #endif
-  
+
             ret = true;
           } else {
             #ifdef EXOSITEDEBUG
@@ -182,7 +194,7 @@ boolean Exosite::writeRead(const char* writeString, const char* readString, char
 
               Serial.println(rxdata);
             #endif
-          }  
+          }
         }
       }
       time_now = millis();
@@ -318,7 +330,7 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
                           strlen(snString) +
                           strlen(vendorParameter) +
                           strlen(modelParameter) +
-                          strlen(snParameter) + 
+                          strlen(snParameter) +
                           1;
   char *writeString = (char*)malloc(sizeof(char) * (writeStringLen));
 
@@ -341,7 +353,11 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
   if (!client->connected()) {
     Serial.print("No Existing Connection, Opening One...");
     client->stop();
+#ifdef CC3200
+    client->sslConnect(serverName,443);
+#else /*CC3200*/
     client->connect(serverName,80);
+#endif /*CC3200*/
   }
 
   if (client->connected()) {
@@ -368,15 +384,15 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
       Serial.print(F("Sent: "));
       Serial.println(writeString);
     #endif
-    
+
     while ((timeout_time > time_now) && RxLoop && stringPos < 200) {
       if (client->available()) {
         if (!DataRx)
           DataRx= true;
-        
+
         c = client->read();
         rxdata[stringPos] = c;
-        
+
         stringPos += 1;
       } else {
         rxdata[stringPos] = 0;
@@ -473,6 +489,51 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
 *
 * Write the CIK to EEPROM
 *=============================================================================*/
+#ifdef CC3200
+#define CIK_LENGTH 40
+#define CIK_FILENAME "exosite_cik.txt"
+
+
+boolean Exosite::saveNVCIK()
+{
+    int iRetVal;
+    long lFileHandle;
+    unsigned long ulToken;
+
+    //
+    // open the cik file for writing
+    //
+    iRetVal = sl_FsOpen((unsigned char *) CIK_FILENAME,
+                        FS_MODE_OPEN_CREATE(CIK_LENGTH, _FS_FILE_OPEN_FLAG_COMMIT|_FS_FILE_PUBLIC_WRITE|_FS_FILE_PUBLIC_READ),
+                        &ulToken,
+                        &lFileHandle);
+    if(iRetVal < 0)
+    {
+        iRetVal = sl_FsClose(lFileHandle, 0, 0, 0);
+        return false;
+    }
+
+    //
+    // write the cik to file
+    //
+    iRetVal = sl_FsWrite(lFileHandle,
+                         (unsigned int)0,
+                         (unsigned char *)cik,
+                         CIK_LENGTH);
+    if (iRetVal < 0)
+    {
+        iRetVal = sl_FsClose(lFileHandle, 0, 0, 0);
+        return false;
+    }
+
+    //
+    // close the cik file
+    //
+    iRetVal = sl_FsClose(lFileHandle, 0, 0, 0);
+    return true;
+}
+
+#else
 boolean Exosite::saveNVCIK(){
   for(int i = 0; i < 40; i++){
     EEPROM.write(CIK_EEPROM_ADDRESS + i, cik[i]);
@@ -480,7 +541,7 @@ boolean Exosite::saveNVCIK(){
 
   return true;
 }
-
+#endif /*CC3200*/
 
 
 /*==============================================================================
@@ -488,6 +549,54 @@ boolean Exosite::saveNVCIK(){
 *
 * Fetch the CIK from EEPROM
 *=============================================================================*/
+#ifdef CC3200
+boolean Exosite::fetchNVCIK()
+{
+    unsigned long ulToken;
+    long lFileHandle;
+    long lRetVal = -1;
+    char read_buffer[41];
+
+    //
+    // open a the cik file for reading
+    //
+    lRetVal = sl_FsOpen((unsigned char *) CIK_FILENAME,
+                        FS_MODE_OPEN_READ,
+                        &ulToken,
+                        &lFileHandle);
+    if(lRetVal < 0)
+    {
+        lRetVal = sl_FsClose(lFileHandle, 0, 0, 0);
+        return false;
+    }
+
+    //
+    // read the cik from file
+    //
+    lRetVal = sl_FsRead(lFileHandle,
+                (unsigned int)0,
+                (unsigned char *) read_buffer,
+                 CIK_LENGTH);
+    if ((lRetVal < 0) || (lRetVal != CIK_LENGTH))
+    {
+        lRetVal = sl_FsClose(lFileHandle, 0, 0, 0);
+        return false;
+    }
+
+    //
+    // close the cik file
+    //
+    lRetVal = sl_FsClose(lFileHandle, 0, 0, 0);
+    if (SL_RET_CODE_OK != lRetVal)
+    {
+        return false;
+    }
+
+    read_buffer[40] = 0;
+    strcpy(cik, read_buffer);
+    return true;
+}
+#else
 boolean Exosite::fetchNVCIK(){
   char tempBuf[41];
 
@@ -503,6 +612,7 @@ boolean Exosite::fetchNVCIK(){
     return false;
   }
 }
+#endif /*CC3200*/
 
 /*==============================================================================
 * time
@@ -523,7 +633,11 @@ unsigned long Exosite::time(){
   if (!client->connected()) {
     Serial.print("No Existing Connection, Opening One...");
     client->stop();
+#ifdef CC3200
+    client->sslConnect(serverName,80);
+#else /*CC3200*/
     client->connect(serverName,80);
+#endif /*CC3200*/
   }
 
   if (client->connected()) {
@@ -546,15 +660,15 @@ unsigned long Exosite::time(){
     #ifdef EXOSITEDEBUG
       Serial.print(F("Sent"));
     #endif
-    
+
     while ((timeout_time > time_now) && RxLoop && stringPos < 200) {
       if (client->available()) {
         if (!DataRx)
           DataRx= true;
-        
+
         c = client->read();
         rxdata[stringPos] = c;
-        
+
         stringPos += 1;
 
         #if EXOSITEDEBUG > 2
@@ -588,14 +702,14 @@ unsigned long Exosite::time(){
       time_now = millis();
     }
 
-    
+
       if(timeout_time <= time_now){
 #ifdef EXOSITEDEBUG
         Serial.println(F("HTTP Response Timeout"));
 #endif
         client->stop();
       }
-   
+
 
     if(stringPos >= 199){
       Serial.println(F("Received too Much Content, Failing"));
