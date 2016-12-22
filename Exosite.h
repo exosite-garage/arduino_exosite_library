@@ -27,6 +27,8 @@
 
 #ifndef Exosite_h
 #define Exosite_h
+#include <Arduino.h>
+#include <WiFi.h>
 
 #define ACTIVATOR_VERSION   "2.5.2"
 
@@ -50,16 +52,15 @@
   #define CIK_EEPROM_ADDRESS 0 //Takes Addresses 0 - 39 (dec)
 #endif
 
-#define CC3200
 // Do not Edit Past This Point
 
-#ifndef CC3200
+#ifndef SL_DRIVER_VERSION // SimpleLink on CC3200
 #include <SPI.h>
 #include <EEPROM.h>
 #endif
 #include <Client.h>
 
-#ifdef CC3200
+#ifdef SL_DRIVER_VERSION
 #define boolean bool
 #endif
 
@@ -96,7 +97,7 @@ class Exosite
     Exosite(const char *_cik, Client *_client);
     Exosite(const String _cik, Client *_client);
 
-    #if defined(ESP8266) || defined(CC3200)
+    #if defined(ESP8266) || defined(SL_DRIVER_VERSION)
     void begin();
     #endif
 

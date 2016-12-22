@@ -26,14 +26,6 @@
 //*****************************************************************************
 
 #include "Exosite.h"
-#include "Arduino.h"
-
-#ifdef CC3200
-extern "C" {
-  #include "utility/wl_definitions.h"
-  #include "utility/socket.h"
-}
-#endif
 
 /*==============================================================================
 * Exosite
@@ -43,7 +35,7 @@ extern "C" {
 Exosite::Exosite(Client *_client)
 {
   client = _client;
-#if !defined(ESP8266) && !defined(CC3200)
+#if !defined(ESP8266) && !defined(SL_DRIVER_VERSION)
   fetchNVCIK();
 #endif
 }
@@ -63,9 +55,9 @@ Exosite::Exosite(const String _cik, Client *_client)
 /*==============================================================================
 * begin
 *
-* cik must be fetched after initialization on ESP8266
+* cik must be fetched after initialization on ESP8266 or CC3200
 *=============================================================================*/
-#if defined(ESP8266) || defined(CC3200)
+#if defined(ESP8266) || defined(SL_DRIVER_VERSION)
 void Exosite::begin(){
   fetchNVCIK();
 }
@@ -101,8 +93,8 @@ boolean Exosite::writeRead(const char* writeString, const char* readString, char
   if (!client->connected()) {
     Serial.print("No Existing Connection, Opening One...");
     client->stop();
-#ifdef CC3200
-    client->sslConnect(serverName,80);
+#ifdef SL_DRIVER_VERSION
+    client->sslConnect(serverName,443);
 #else /*CC3200*/
     client->connect(serverName,80);
 #endif /*CC3200*/
@@ -353,7 +345,7 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
   if (!client->connected()) {
     Serial.print("No Existing Connection, Opening One...");
     client->stop();
-#ifdef CC3200
+#ifdef SL_DRIVER_VERSION
     client->sslConnect(serverName,443);
 #else /*CC3200*/
     client->connect(serverName,80);
@@ -489,10 +481,9 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
 *
 * Write the CIK to EEPROM
 *=============================================================================*/
-#ifdef CC3200
+#ifdef SL_DRIVER_VERSION
 #define CIK_LENGTH 40
 #define CIK_FILENAME "exosite_cik.txt"
-
 
 boolean Exosite::saveNVCIK()
 {
@@ -541,7 +532,7 @@ boolean Exosite::saveNVCIK(){
 
   return true;
 }
-#endif /*CC3200*/
+#endif /*SL_DRIVER_VERSION*/
 
 
 /*==============================================================================
@@ -549,7 +540,7 @@ boolean Exosite::saveNVCIK(){
 *
 * Fetch the CIK from EEPROM
 *=============================================================================*/
-#ifdef CC3200
+#ifdef SL_DRIVER_VERSION
 boolean Exosite::fetchNVCIK()
 {
     unsigned long ulToken;
@@ -612,7 +603,7 @@ boolean Exosite::fetchNVCIK(){
     return false;
   }
 }
-#endif /*CC3200*/
+#endif /*SL_DRIVER_VERSION*/
 
 /*==============================================================================
 * time
@@ -633,8 +624,8 @@ unsigned long Exosite::time(){
   if (!client->connected()) {
     Serial.print("No Existing Connection, Opening One...");
     client->stop();
-#ifdef CC3200
-    client->sslConnect(serverName,80);
+#ifdef SL_DRIVER_VERSION
+    client->sslConnect(serverName,443);
 #else /*CC3200*/
     client->connect(serverName,80);
 #endif /*CC3200*/
