@@ -2,7 +2,7 @@
 //
 // exosite.h - Prototypes for the Exosite Cloud API
 //
-// Copyright (c) 2012-2016 Exosite LLC.  All rights reserved.
+// Copyright (c) 2012-2017 Exosite LLC.  All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -30,7 +30,7 @@
 #include <Arduino.h>
 #include <WiFi.h>
 
-#define ACTIVATOR_VERSION   "2.5.2"
+#define ACTIVATOR_VERSION   "2.6.0"
 
 // Select a Debug Level:
 //#define EXOSITEDEBUG 1
