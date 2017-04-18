@@ -1,21 +1,22 @@
+
 //*****************************************************************************
 //
 // exosite.h - Prototypes for the Exosite Cloud API
 //
-// Copyright (c) 2012-2017 Exosite LLC.  All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
+// Copyright (c) 2012 Exosite LLC.  All rights reserved.
+// 
+// Redistribution and use in source and binary forms, with or without 
 // modification, are permitted provided that the following conditions are met:
 
 //  * Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-//  * Redistributions in binary form must reproduce the above copyright
+//  * Redistributions in binary form must reproduce the above copyright 
 //    notice, this list of conditions and the following disclaimer in the
 //    documentation and/or other materials provided with the distribution.
 //  * Neither the name of Exosite LLC nor the names of its contributors may
-//    be used to endorse or promote products derived from this software
+//    be used to endorse or promote products derived from this software 
 //    without specific prior written permission.
-//
+// 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
 // NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -27,12 +28,10 @@
 
 #ifndef Exosite_h
 #define Exosite_h
-#include <Arduino.h>
-#include <WiFi.h>
 
-#define ACTIVATOR_VERSION   "2.6.0"
+#define ACTIVATOR_VERSION   "2.5.2"
 
-// Select a Debug Level:
+// Select a Debug Level: 
 //#define EXOSITEDEBUG 1
 //#define EXOSITEDEBUG 2
 //#define EXOSITEDEBUG 3
@@ -54,15 +53,10 @@
 
 // Do not Edit Past This Point
 
-#ifndef SL_DRIVER_VERSION // SimpleLink on CC3200
 #include <SPI.h>
-#include <EEPROM.h>
-#endif
 #include <Client.h>
+#include <EEPROM.h>
 
-#ifdef SL_DRIVER_VERSION
-#define boolean bool
-#endif
 
 #ifdef EXOSITEDEBUGMEM
 #include <MemoryFree.h>
@@ -83,6 +77,7 @@ class Exosite
     boolean DataRx;
     boolean RxLoop;
     char c;
+    unsigned long requestTimeout;
     unsigned long timeout_time;
     unsigned long time_now;
     unsigned long timeout;
@@ -97,7 +92,7 @@ class Exosite
     Exosite(const char *_cik, Client *_client);
     Exosite(const String _cik, Client *_client);
 
-    #if defined(ESP8266) || defined(SL_DRIVER_VERSION)
+    #if defined(ESP8266)
     void begin();
     #endif
 
@@ -107,6 +102,15 @@ class Exosite
 
     boolean writeRead(const char* writeString,const char* readString, char** returnString);
     boolean writeRead(const String &writeString, const String &readString, String &returnString);
+
+    boolean read(const char* readString, char** returnString);
+    boolean read(const String &readString, String &returnString);
+
+    boolean longPoll(const char* readString, char** returnString);
+    boolean longPoll(const String &readString, String &returnString);
+
+    boolean write(const char* writeString);
+    boolean write(const String &writeString);
 
     boolean provision(const char* vendorString, const char* modelString, const char* snString);
 

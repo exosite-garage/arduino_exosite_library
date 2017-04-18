@@ -2,20 +2,20 @@
 //
 // exosite.cpp - Prototypes for the Exosite Cloud API
 //
-// Copyright (c) 2012-2016 Exosite LLC.  All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
+// Copyright (c) 2012 Exosite LLC.  All rights reserved.
+// 
+// Redistribution and use in source and binary forms, with or without 
 // modification, are permitted provided that the following conditions are met:
 
 //  * Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-//  * Redistributions in binary form must reproduce the above copyright
+//  * Redistributions in binary form must reproduce the above copyright 
 //    notice, this list of conditions and the following disclaimer in the
 //    documentation and/or other materials provided with the distribution.
 //  * Neither the name of Exosite LLC nor the names of its contributors may
-//    be used to endorse or promote products derived from this software
+//    be used to endorse or promote products derived from this software 
 //    without specific prior written permission.
-//
+// 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
 // NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -25,7 +25,7 @@
 //
 //*****************************************************************************
 
-#include "Exosite.h"
+#include "Exosite-dev.h"
 
 /*==============================================================================
 * Exosite
@@ -35,9 +35,9 @@
 Exosite::Exosite(Client *_client)
 {
   client = _client;
-#if !defined(ESP8266) && !defined(SL_DRIVER_VERSION)
+  #if !defined(ESP8266)
   fetchNVCIK();
-#endif
+  #endif
 }
 
 Exosite::Exosite(const char *_cik, Client *_client)
@@ -55,9 +55,9 @@ Exosite::Exosite(const String _cik, Client *_client)
 /*==============================================================================
 * begin
 *
-* cik must be fetched after initialization on ESP8266 or CC3200
+* cik must be fetched after initialization on ESP8266
 *=============================================================================*/
-#if defined(ESP8266) || defined(SL_DRIVER_VERSION)
+#if defined(ESP8266)
 void Exosite::begin(){
   fetchNVCIK();
 }
@@ -93,11 +93,11 @@ boolean Exosite::writeRead(const char* writeString, const char* readString, char
   if (!client->connected()) {
     Serial.print("No Existing Connection, Opening One...");
     client->stop();
-#ifdef SL_DRIVER_VERSION
+  #ifdef SL_DRIVER_VERSION
     client->sslConnect(serverName,443);
-#else /*CC3200*/
+  #else /*CC3200*/
     client->connect(serverName,80);
-#endif /*CC3200*/
+  #endif /*CC3200*/
   }
 
   if (client->connected()) {
@@ -128,19 +128,19 @@ boolean Exosite::writeRead(const char* writeString, const char* readString, char
     #if EXOSITEDEBUG > 1
       Serial.println(F("Sent"));
     #endif
-
+    
     while ((timeout_time > time_now) && RxLoop && stringPos < 200) {
       if (client->available()) {
         if (!DataRx)
           DataRx= true;
-
+        
         c = client->read();
         rxdata[stringPos] = c;
 
         #if EXOSITEDEBUG > 2
           Serial.print(c);
         #endif
-
+        
         stringPos += 1;
       } else {
         #if EXOSITEDEBUG > 4
@@ -156,12 +156,12 @@ boolean Exosite::writeRead(const char* writeString, const char* readString, char
               Serial.println("HTTP Response:");
               Serial.println(rxdata);
             #endif
-
+  
           if (strstr(rxdata, "HTTP/1.1 200 OK")) {
             #ifdef EXOSITEDEBUG
               Serial.println(F("HTTP Status: 200"));
             #endif
-
+  
             ret = true;
             varPtr = strstr(rxdata, "\r\n\r\n") + 4;
 
@@ -175,7 +175,7 @@ boolean Exosite::writeRead(const char* writeString, const char* readString, char
             #ifdef EXOSITEDEBUG
               Serial.println(F("HTTP Status: 204"));
             #endif
-
+  
             ret = true;
           } else {
             #ifdef EXOSITEDEBUG
@@ -186,7 +186,7 @@ boolean Exosite::writeRead(const char* writeString, const char* readString, char
 
               Serial.println(rxdata);
             #endif
-          }
+          }  
         }
       }
       time_now = millis();
@@ -302,6 +302,626 @@ boolean Exosite::writeRead(const String &writeString, const String &readString, 
 }
 
 /*==============================================================================
+* read
+*
+* One step read from Exosite using char arrays.
+*=============================================================================*/
+boolean Exosite::read(const char* readString, char** returnString){
+  ret = false;
+  stringPos = 0;
+  DataRx= false;
+  RxLoop = true;
+  timeout_time = 0;
+  time_now = 0;
+  timeout = 3000; // 3 seconds
+  varPtr = aliasList;
+
+  Serial.print(F("Connecting to Exosite..."));
+
+  if (!client->connected()) {
+    Serial.print("No Existing Connection, Opening One...");
+    client->stop();
+  #ifdef SL_DRIVER_VERSION
+    client->sslConnect(serverName,443);
+  #else /*CC3200*/
+    client->connect(serverName,80);
+  #endif /*CC3200*/
+  }
+
+  if (client->connected()) {
+    client->flush();
+    Serial.println(F("Connected"));
+
+    // Send request using Exosite basic HTTP API
+    client->print(G("GET /onep:v1/stack/alias?"));
+    client->print(readString);
+    client->println(G(" HTTP/1.1"));
+    client->print(G("Host: "));
+    client->println(serverName);
+    client->print(G("User-Agent: Exosite-Activator/"));
+    client->print(ACTIVATOR_VERSION);
+    client->print(G(" Arduino/"));
+    client->println(ARDUINO);
+    client->print(G("X-Exosite-CIK: "));
+    client->println(cik);
+    client->println(G("Accept: application/x-www-form-urlencoded; charset=utf-8"));
+    client->println();
+    // Read from the nic or the IC buffer overflows with no warning and goes out to lunch
+    timeout_time = millis()+ timeout;
+
+    #if EXOSITEDEBUG > 1
+      Serial.println(F("Sent"));
+    #endif
+
+    while ((timeout_time > time_now) && RxLoop && stringPos < 200) {
+      if (client->available()) {
+        if (!DataRx)
+          DataRx= true;
+
+        c = client->read();
+        rxdata[stringPos] = c;
+
+        #if EXOSITEDEBUG > 2
+          Serial.print(c);
+        #endif
+
+        stringPos += 1;
+      } else {
+        #if EXOSITEDEBUG > 4
+          Serial.println(F("No More Data"));
+        #endif
+        rxdata[stringPos] = 0;
+
+        if (DataRx) {
+          DataRx = false;
+          RxLoop = false;
+
+            #if EXOSITEDEBUG > 1
+              Serial.println("HTTP Response:");
+              Serial.println(rxdata);
+            #endif
+
+          if (strstr(rxdata, "HTTP/1.1 200 OK")) {
+            #ifdef EXOSITEDEBUG
+              Serial.println(F("HTTP Status: 200"));
+            #endif
+
+            ret = true;
+            varPtr = strstr(rxdata, "\r\n\r\n") + 4;
+
+            *returnString = (char*) realloc(*returnString, (rxdata + stringPos + 1) - varPtr);
+
+            if(*returnString == 0)
+              break;
+
+            strncpy(*returnString, varPtr, (rxdata + stringPos + 1) - varPtr);
+          } else {
+            #ifdef EXOSITEDEBUG
+              Serial.println(F("Warning Unknown Response: "));
+
+              varPt r = strstr(rxdata, "\n");
+              *varPtr = '\0';
+
+              Serial.println(rxdata);
+            #endif
+          }
+        }
+      }
+      time_now = millis();
+    }
+
+    if(timeout_time <= time_now){
+      Serial.println(F("Error: HTTP Response Timeout"));
+      client->stop();
+    }
+
+    if(stringPos >= 199){
+      Serial.println(F("Received too Much Content, Failing"));
+
+        #if EXOSITEDEBUG > 2
+          Serial.println("Received So Far");
+          Serial.println(rxdata);
+          Serial.println("Also Received:");
+        #endif
+
+      while (client->available()) {
+        c = client->read();
+
+        #if EXOSITEDEBUG > 2
+          Serial.write(c);
+        #endif
+      }
+      return false;
+    }
+  }else{
+    Serial.println(F("Error: Can't Open Connection to Exosite."));
+  }
+
+  #ifdef EXOSITEDEBUG
+    Serial.println(F("End Char Read"));
+  #endif
+
+  return ret;
+}
+
+/*==============================================================================
+* read
+*
+* One step read from Exosite using Arduino String objects.
+*=============================================================================*/
+boolean Exosite::read(const String &readString, String &returnString){
+  #ifdef EXOSITEDEBUGMEM
+    Serial.print(getFreeMemory());
+    Serial.println(F(" = Free Memory String Start"));
+    Serial.println(readString);
+  #endif
+
+  char *readCharString, *returnCharString;
+  readCharString = (char*)malloc(sizeof(char) * readString.length()+1);
+  returnCharString = (char*)malloc(sizeof(char) * 32);
+
+  #ifdef EXOSITEDEBUGMEM
+    Serial.print(getFreeMemory());
+    Serial.println(F(" = Free Memory String Chars Allocated"));
+    Serial.print(F("Return Address Before: "));
+    Serial.println((intptr_t)returnCharString);
+  #endif
+
+  if(readCharString == 0 || returnCharString == 0){
+    Serial.println(F("Not Enough Ram! Failing!"));
+    while(1);
+  }
+
+  readString.toCharArray(readCharString, readString.length()+1);
+
+
+  #ifdef EXOSITEDEBUGMEM
+    Serial.print(getFreeMemory());
+    Serial.println(F(" = Free Memory String Start Char Write"));
+  #endif
+
+  if(this->read(readCharString, &returnCharString)){
+
+    #ifdef EXOSITEDEBUGMEM
+      Serial.print(getFreeMemory());
+      Serial.println(F(" = Free Memory String Char Write Finished"));
+      Serial.print(F("Return Address After: "));
+      Serial.println((intptr_t)returnCharString);
+    #endif
+
+    returnString = String(returnCharString);
+
+
+    #ifdef EXOSITEDEBUGMEM
+      Serial.print(getFreeMemory());
+      Serial.println(F(" = Free Memory String Chars Copied"));
+    #endif
+
+    ret = true;
+  }else{
+    Serial.println(F("Error Communicating with Exosite"));
+    ret = false;
+  }
+  free(readCharString);
+  free(returnCharString);
+
+
+  #ifdef EXOSITEDEBUGMEM
+    Serial.print(getFreeMemory());
+    Serial.println(F(" = Free Memory String Chars Freed"));
+  #endif
+
+  return ret;
+}
+/*==============================================================================
+* longPoll
+*
+* Constant read from Exosite using char arrays.
+*=============================================================================*/
+boolean Exosite::longPoll(const char* readString, char** returnString){
+  ret = false;
+  stringPos = 0;
+  DataRx= false;
+  RxLoop = true;
+  requestTimeout = 60000; //one minute
+  timeout_time = 0;
+  time_now = 0;
+  timeout = requestTimeout; // Temporary replacement as client->available() is not suited to handle longPoll
+  varPtr = aliasList;
+
+  Serial.print(F("Connecting to Exosite..."));
+
+  if (!client->connected()) {
+    Serial.print("No Existing Connection, Opening One...");
+    client->stop();
+  #ifdef SL_DRIVER_VERSION
+    client->sslConnect(serverName,443);
+  #else /*CC3200*/  
+    client->connect(serverName,80);
+  #endif /*CC3200*/
+  }
+
+  if (client->connected()) {
+    client->flush();
+    Serial.println(F("Connected"));
+    Serial.println("Polling...");
+
+    // Send request using Exosite basic HTTP API
+    client->print(G("GET /onep:v1/stack/alias?"));
+    client->print(readString);
+    client->println(G(" HTTP/1.1"));
+    client->print(G("Host: "));
+    client->println(serverName);
+    client->print(G("User-Agent: Exosite-Activator/"));
+    client->print(ACTIVATOR_VERSION);
+    client->print(G(" Arduino/"));
+    client->println(ARDUINO);
+    client->print(G("X-Exosite-CIK: "));
+    client->println(cik);
+    client->println(G("Accept: application/x-www-form-urlencoded; charset=utf-8"));
+    client->print(G("Request-Timeout: "));
+    client->println(requestTimeout);
+    client->println();
+    // Read from the nic or the IC buffer overflows with no warning and goes out to lunch
+    timeout_time = millis()+ timeout;
+
+    #if EXOSITEDEBUG > 1
+      Serial.println(F("Sent"));
+    #endif
+
+    while ((timeout_time > time_now) && RxLoop && stringPos < 200) {
+      if (client->available()) { //During the longPoll HTTP request, this returns false unless data is updated
+        if (!DataRx)
+          DataRx= true;
+
+        c = client->read();
+        rxdata[stringPos] = c;
+
+        #if EXOSITEDEBUG > 2
+          Serial.print(c);
+        #endif
+
+        stringPos += 1;
+      } else {
+        #if EXOSITEDEBUG > 4
+          Serial.println(F("No More Data"));
+        #endif
+        rxdata[stringPos] = 0;
+
+        if (DataRx) {
+          DataRx = false;
+          RxLoop = false;
+
+            #if EXOSITEDEBUG > 1
+              Serial.println("HTTP Response:");
+              Serial.println(rxdata);
+            #endif
+
+          if (strstr(rxdata, "HTTP/1.1 200 OK")) {
+            #ifdef EXOSITEDEBUG
+              Serial.println(F("HTTP Status: 200"));
+            #endif
+
+            ret = true;
+            varPtr = strstr(rxdata, "\r\n\r\n") + 4;
+
+            *returnString = (char*) realloc(*returnString, (rxdata + stringPos + 1) - varPtr);
+
+            if(*returnString == 0)
+              break;
+
+            strncpy(*returnString, varPtr, (rxdata + stringPos + 1) - varPtr);
+          }else if(strstr(rxdata, "HTTP/1.1 304 Not Modified")){
+            #ifdef EXOSITEDEBUG
+              Serial.println(F("HTTP Status: 304"));
+            #endif
+
+            ret = true;
+          } else {
+            #ifdef EXOSITEDEBUG
+              Serial.println(F("Warning Unknown Response: "));
+
+              varPt r = strstr(rxdata, "\n");
+              *varPtr = '\0';
+
+              Serial.println(rxdata);
+            #endif
+          }
+        }
+      }
+      time_now = millis();
+    }
+
+    if(timeout_time <= time_now){
+      Serial.println(F("Error: HTTP Response Timeout"));
+      client->stop();
+    }
+
+    if(stringPos >= 199){
+      Serial.println(F("Received too Much Content, Failing"));
+
+        #if EXOSITEDEBUG > 2
+          Serial.println("Received So Far");
+          Serial.println(rxdata);
+          Serial.println("Also Received:");
+        #endif
+
+      while (client->available()) {
+        c = client->read();
+
+        #if EXOSITEDEBUG > 2
+          Serial.write(c);
+        #endif
+      }
+      return false;
+    }
+  }else{
+    Serial.println(F("Error: Can't Open Connection to Exosite."));
+  }
+
+  #ifdef EXOSITEDEBUG
+    Serial.println(F("End Char Read"));
+  #endif
+
+  return ret;
+}
+
+/*==============================================================================
+* longPoll
+*
+* Constant read from Exosite using Arduino String objects.
+*=============================================================================*/
+boolean Exosite::longPoll(const String &readString, String &returnString){
+  #ifdef EXOSITEDEBUGMEM
+    Serial.print(getFreeMemory());
+    Serial.println(F(" = Free Memory String Start"));
+    Serial.println(readString);
+  #endif
+
+  char *readCharString, *returnCharString;
+  readCharString = (char*)malloc(sizeof(char) * readString.length()+1);
+  returnCharString = (char*)malloc(sizeof(char) * 32);
+
+  #ifdef EXOSITEDEBUGMEM
+    Serial.print(getFreeMemory());
+    Serial.println(F(" = Free Memory String Chars Allocated"));
+    Serial.print(F("Return Address Before: "));
+    Serial.println((intptr_t)returnCharString);
+  #endif
+
+  if(readCharString == 0 || returnCharString == 0){
+    Serial.println(F("Not Enough Ram! Failing!"));
+    while(1);
+  }
+
+  readString.toCharArray(readCharString, readString.length()+1);
+
+
+  #ifdef EXOSITEDEBUGMEM
+    Serial.print(getFreeMemory());
+    Serial.println(F(" = Free Memory String Start Char Write"));
+  #endif
+
+  if(this->longPoll(readCharString, &returnCharString)){
+
+    #ifdef EXOSITEDEBUGMEM
+      Serial.print(getFreeMemory());
+      Serial.println(F(" = Free Memory String Char Write Finished"));
+      Serial.print(F("Return Address After: "));
+      Serial.println((intptr_t)returnCharString);
+    #endif
+
+    returnString = String(returnCharString);
+
+
+    #ifdef EXOSITEDEBUGMEM
+      Serial.print(getFreeMemory());
+      Serial.println(F(" = Free Memory String Chars Copied"));
+    #endif
+
+    ret = true;
+  }else{
+    Serial.println(F("Error Communicating with Exosite"));
+    ret = false;
+  }
+  free(readCharString);
+  free(returnCharString);
+
+
+  #ifdef EXOSITEDEBUGMEM
+    Serial.print(getFreeMemory());
+    Serial.println(F(" = Free Memory String Chars Freed"));
+  #endif
+
+  return ret;
+}
+/*==============================================================================
+* write
+*
+* One step write to Exosite using char arrays.
+*=============================================================================*/
+boolean Exosite::write(const char* writeString){
+  ret = false;
+  stringPos = 0;
+  DataRx= false;
+  RxLoop = true;
+  timeout_time = 0;
+  time_now = 0;
+  timeout = 3000; // 3 seconds
+  varPtr = aliasList;
+
+  Serial.print(F("Connecting to Exosite..."));
+
+  if (!client->connected()) {
+    Serial.print("No Existing Connection, Opening One...");
+    client->stop();
+  #ifdef SL_DRIVER_VERSION
+    client->sslConnect(serverName,443);
+  #else /*CC3200*/
+    client->connect(serverName,80);
+  #endif /*CC3200*/
+  }
+
+  if (client->connected()) {
+    client->flush();
+    Serial.println(F("Connected"));
+
+    // Send request using Exosite basic HTTP API
+    client->print(G("POST /onep:v1/stack/alias?"));
+    client->println(G(" HTTP/1.1"));
+    client->print(G("Host: "));
+    client->println(serverName);
+    client->print(G("User-Agent: Exosite-Activator/"));
+    client->print(ACTIVATOR_VERSION);
+    client->print(G(" Arduino/"));
+    client->println(ARDUINO);
+    client->print(G("X-Exosite-CIK: "));
+    client->println(cik);
+    client->println(G("Content-Type: application/x-www-form-urlencoded; charset=utf-8"));
+    client->print(G("Content-Length: "));
+    client->println(strlen(writeString)); //calculate length
+    client->println();
+    client->println(writeString);
+    // Read from the nic or the IC buffer overflows with no warning and goes out to lunch
+    timeout_time = millis()+ timeout;
+
+    #if EXOSITEDEBUG > 1
+      Serial.println(F("Sent"));
+    #endif
+
+    while ((timeout_time > time_now) && RxLoop && stringPos < 200) {
+      if (client->available()) {
+        if (!DataRx)
+          DataRx= true;
+
+        c = client->read();
+        rxdata[stringPos] = c;
+
+        #if EXOSITEDEBUG > 2
+          Serial.print(c);
+        #endif
+
+        stringPos += 1;
+      } else {
+        #if EXOSITEDEBUG > 4
+          Serial.println(F("No More Data"));
+        #endif
+        rxdata[stringPos] = 0;
+
+        if (DataRx) {
+          DataRx = false;
+          RxLoop = false;
+
+            #if EXOSITEDEBUG > 1
+              Serial.println("HTTP Response:");
+              Serial.println(rxdata);
+            #endif
+
+          if(strstr(rxdata, "HTTP/1.1 204 No Content")){
+            #ifdef EXOSITEDEBUG
+              Serial.println(F("HTTP Status: 204"));
+            #endif
+
+            ret = true;
+            Serial.println(rxdata);
+
+          } else {
+            #ifdef EXOSITEDEBUG
+              Serial.println(F("Warning Unknown Response: "));
+
+              varPtr = strstr(rxdata, "\n");
+              *varPtr = '\0';
+
+              Serial.println(rxdata);
+            #endif
+          }
+        }
+      }
+      time_now = millis();
+    }
+
+    if(timeout_time <= time_now){
+      Serial.println(F("Error: HTTP Response Timeout"));
+      client->stop();
+    }
+
+  }else{
+    Serial.println(F("Error: Can't Open Connection to Exosite."));
+  }
+
+  #ifdef EXOSITEDEBUG
+    Serial.println(F("End Char Write"));
+  #endif
+
+  return ret;
+}
+
+
+/*==============================================================================
+* write
+*
+* One step write to Exosite using Arduino String objects.
+*=============================================================================*/
+boolean Exosite::write(const String &writeString){
+  #ifdef EXOSITEDEBUGMEM
+    Serial.print(getFreeMemory());
+    Serial.println(F(" = Free Memory String Start"));
+    Serial.println(writeString);
+  #endif
+
+  char *writeCharString;
+  writeCharString = (char*)malloc(sizeof(char) * writeString.length()+1);
+
+  #ifdef EXOSITEDEBUGMEM
+    Serial.print(getFreeMemory());
+    Serial.println(F(" = Free Memory String Chars Allocated"));
+    Serial.print(F("Return Address Before: "));
+  #endif
+
+  if(writeCharString == 0){
+    Serial.println(F("Not Enough Ram! Failing!"));
+    while(1);
+  }
+
+  writeString.toCharArray(writeCharString, writeString.length()+1);
+
+
+  #ifdef EXOSITEDEBUGMEM
+    Serial.print(getFreeMemory());
+    Serial.println(F(" = Free Memory String Start Char Write"));
+  #endif
+
+  if(this->write(writeCharString)){
+
+    #ifdef EXOSITEDEBUGMEM
+      Serial.print(getFreeMemory());
+      Serial.println(F(" = Free Memory String Char Write Finished"));
+      Serial.print(F("Return Address After: "));
+    #endif
+
+
+
+    #ifdef EXOSITEDEBUGMEM
+      Serial.print(getFreeMemory());
+      Serial.println(F(" = Free Memory String Chars Copied"));
+    #endif
+
+    ret = true;
+  }else{
+    Serial.println(F("Error Communicating with Exosite"));
+    ret = false;
+  }
+  free(writeCharString);
+
+  #ifdef EXOSITEDEBUGMEM
+    Serial.print(getFreeMemory());
+    Serial.println(F(" = Free Memory String Chars Freed"));
+  #endif
+
+  return ret;
+}
+
+/*==============================================================================
 * provision
 *
 * Provision on Exosite Platform, activate device and get cik.
@@ -322,7 +942,7 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
                           strlen(snString) +
                           strlen(vendorParameter) +
                           strlen(modelParameter) +
-                          strlen(snParameter) +
+                          strlen(snParameter) + 
                           1;
   char *writeString = (char*)malloc(sizeof(char) * (writeStringLen));
 
@@ -345,11 +965,7 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
   if (!client->connected()) {
     Serial.print("No Existing Connection, Opening One...");
     client->stop();
-#ifdef SL_DRIVER_VERSION
-    client->sslConnect(serverName,443);
-#else /*CC3200*/
     client->connect(serverName,80);
-#endif /*CC3200*/
   }
 
   if (client->connected()) {
@@ -376,15 +992,15 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
       Serial.print(F("Sent: "));
       Serial.println(writeString);
     #endif
-
+    
     while ((timeout_time > time_now) && RxLoop && stringPos < 200) {
       if (client->available()) {
         if (!DataRx)
           DataRx= true;
-
+        
         c = client->read();
         rxdata[stringPos] = c;
-
+        
         stringPos += 1;
       } else {
         rxdata[stringPos] = 0;
@@ -481,50 +1097,6 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
 *
 * Write the CIK to EEPROM
 *=============================================================================*/
-#ifdef SL_DRIVER_VERSION
-#define CIK_LENGTH 40
-#define CIK_FILENAME "exosite_cik.txt"
-
-boolean Exosite::saveNVCIK()
-{
-    int iRetVal;
-    long lFileHandle;
-    unsigned long ulToken;
-
-    //
-    // open the cik file for writing
-    //
-    iRetVal = sl_FsOpen((unsigned char *) CIK_FILENAME,
-                        FS_MODE_OPEN_CREATE(CIK_LENGTH, _FS_FILE_OPEN_FLAG_COMMIT|_FS_FILE_PUBLIC_WRITE|_FS_FILE_PUBLIC_READ),
-                        &ulToken,
-                        &lFileHandle);
-    if(iRetVal < 0)
-    {
-        iRetVal = sl_FsClose(lFileHandle, 0, 0, 0);
-        return false;
-    }
-
-    //
-    // write the cik to file
-    //
-    iRetVal = sl_FsWrite(lFileHandle,
-                         (unsigned int)0,
-                         (unsigned char *)cik,
-                         CIK_LENGTH);
-    if (iRetVal < 0)
-    {
-        iRetVal = sl_FsClose(lFileHandle, 0, 0, 0);
-        return false;
-    }
-
-    //
-    // close the cik file
-    //
-    iRetVal = sl_FsClose(lFileHandle, 0, 0, 0);
-    return true;
-}
-
-#else
 boolean Exosite::saveNVCIK(){
   for(int i = 0; i < 40; i++){
     EEPROM.write(CIK_EEPROM_ADDRESS + i, cik[i]);
@@ -532,7 +1104,7 @@ boolean Exosite::saveNVCIK(){
 
   return true;
 }
-#endif /*SL_DRIVER_VERSION*/
+
 
 
 /*==============================================================================
@@ -540,54 +1112,6 @@ boolean Exosite::saveNVCIK(){
 *
 * Fetch the CIK from EEPROM
 *=============================================================================*/
-#ifdef SL_DRIVER_VERSION
-boolean Exosite::fetchNVCIK()
-{
-    unsigned long ulToken;
-    long lFileHandle;
-    long lRetVal = -1;
-    char read_buffer[41];
-
-    //
-    // open a the cik file for reading
-    //
-    lRetVal = sl_FsOpen((unsigned char *) CIK_FILENAME,
-                        FS_MODE_OPEN_READ,
-                        &ulToken,
-                        &lFileHandle);
-    if(lRetVal < 0)
-    {
-        lRetVal = sl_FsClose(lFileHandle, 0, 0, 0);
-        return false;
-    }
-
-    //
-    // read the cik from file
-    //
-    lRetVal = sl_FsRead(lFileHandle,
-                (unsigned int)0,
-                (unsigned char *) read_buffer,
-                 CIK_LENGTH);
-    if ((lRetVal < 0) || (lRetVal != CIK_LENGTH))
-    {
-        lRetVal = sl_FsClose(lFileHandle, 0, 0, 0);
-        return false;
-    }
-
-    //
-    // close the cik file
-    //
-    lRetVal = sl_FsClose(lFileHandle, 0, 0, 0);
-    if (SL_RET_CODE_OK != lRetVal)
-    {
-        return false;
-    }
-
-    read_buffer[40] = 0;
-    strcpy(cik, read_buffer);
-    return true;
-}
-#else
 boolean Exosite::fetchNVCIK(){
   char tempBuf[41];
 
@@ -603,7 +1127,6 @@ boolean Exosite::fetchNVCIK(){
     return false;
   }
 }
-#endif /*SL_DRIVER_VERSION*/
 
 /*==============================================================================
 * time
@@ -624,11 +1147,7 @@ unsigned long Exosite::time(){
   if (!client->connected()) {
     Serial.print("No Existing Connection, Opening One...");
     client->stop();
-#ifdef SL_DRIVER_VERSION
-    client->sslConnect(serverName,443);
-#else /*CC3200*/
     client->connect(serverName,80);
-#endif /*CC3200*/
   }
 
   if (client->connected()) {
@@ -651,15 +1170,15 @@ unsigned long Exosite::time(){
     #ifdef EXOSITEDEBUG
       Serial.print(F("Sent"));
     #endif
-
+    
     while ((timeout_time > time_now) && RxLoop && stringPos < 200) {
       if (client->available()) {
         if (!DataRx)
           DataRx= true;
-
+        
         c = client->read();
         rxdata[stringPos] = c;
-
+        
         stringPos += 1;
 
         #if EXOSITEDEBUG > 2
@@ -693,14 +1212,14 @@ unsigned long Exosite::time(){
       time_now = millis();
     }
 
-
+    
       if(timeout_time <= time_now){
 #ifdef EXOSITEDEBUG
         Serial.println(F("HTTP Response Timeout"));
 #endif
         client->stop();
       }
-
+   
 
     if(stringPos >= 199){
       Serial.println(F("Received too Much Content, Failing"));
