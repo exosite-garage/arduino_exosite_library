@@ -75,6 +75,7 @@ class Exosite
     boolean ret;
     int stringPos;
     boolean DataRx;
+    boolean MasterLoop;
     boolean RxLoop;
     char c;
     unsigned long requestTimeout;
@@ -106,8 +107,8 @@ class Exosite
     boolean read(const char* readString, char** returnString);
     boolean read(const String &readString, String &returnString);
 
-    boolean longPoll(const char* readString, char** returnString);
-    boolean longPoll(const String &readString, String &returnString);
+    boolean longPoll(const int timeoutRequest, const char* readString, char** returnString);
+    boolean longPoll(const int timeoutRequest, const String &readString, String &returnString);
 
     boolean write(const char* writeString);
     boolean write(const String &writeString);

@@ -55,7 +55,7 @@ const int SENSOR_INTERVAL = 250;
 String readString = "state";
 String returnString;
 
-int randomNumber = 0;
+int timeoutRequest = 650;
 /*==============================================================================
 * End of Configuration Variables
 *=============================================================================*/
@@ -130,7 +130,7 @@ void loop()
     
     Serial.println("==========================");
     
-    if (exosite.longPoll(readString, returnString)) {
+    if (exosite.longPoll(timeoutRequest, readString, returnString)) {
       //Serial.println("Succeeded");
       exosite_comm_errors = 0;
       comm_errors = 0;
