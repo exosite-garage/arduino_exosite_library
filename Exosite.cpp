@@ -522,7 +522,6 @@ boolean Exosite::longPoll(const int timeoutRequest, const char* readString, char
   ret = false;
   stringPos = 0;
   DataRx= false;
-  MasterLoop = true;
   RxLoop = true;
   requestTimeout = timeoutRequest*1000; //passes in the timeoutRequest and converts from seconds (user input) to milliseconds
   timeout_time = 0;
@@ -542,139 +541,126 @@ boolean Exosite::longPoll(const int timeoutRequest, const char* readString, char
   #endif /*CC3200*/
   }
 
-  while(MasterLoop){
-    timeout_time = millis()+ timeout;
-    RxLoop = true;
-    stringPos = 0;
-    while((timeout_time > time_now) && RxLoop){ //checks client->connected() for timeout
-      time_now = millis();
-      if (client->connected()) {
-        client->flush();
-        Serial.println(F("Connected"));
-        Serial.println("Polling...");
+  timeout_time = millis()+ timeout;
 
-        // Send request using Exosite basic HTTP API
-        client->print(G("GET /onep:v1/stack/alias?"));
-        client->print(readString);
-        client->println(G(" HTTP/1.1"));
-        client->print(G("Host: "));
-        client->println(serverName);
-        client->print(G("User-Agent: Exosite-Activator/"));
-        client->print(ACTIVATOR_VERSION);
-        client->print(G(" Arduino/"));
-        client->println(ARDUINO);
-        client->print(G("X-Exosite-CIK: "));
-        client->println(cik);
-        client->println(G("Accept: application/x-www-form-urlencoded; charset=utf-8"));
-        client->print(G("Request-Timeout: "));
-        client->println(requestTimeout);
-        client->println();
-        // Read from the nic or the IC buffer overflows with no warning and goes out to lunch
+  while((timeout_time > time_now) && RxLoop){ //checks client->connected() for timeout
+    time_now = millis();
+    if (client->connected()) {
+      client->flush();
+      Serial.println(F("Connected"));
+      Serial.println("Polling...");
 
-        #if EXOSITEDEBUG > 1
-         Serial.println(F("Sent"));
-        #endif
+      // Send request using Exosite basic HTTP API
+      client->print(G("GET /onep:v1/stack/alias?"));
+      client->print(readString);
+      client->println(G(" HTTP/1.1"));
+      client->print(G("Host: "));
+      client->println(serverName);
+      client->print(G("User-Agent: Exosite-Activator/"));
+      client->print(ACTIVATOR_VERSION);
+      client->print(G(" Arduino/"));
+      client->println(ARDUINO);
+      client->print(G("X-Exosite-CIK: "));
+      client->println(cik);
+      client->println(G("Accept: application/x-www-form-urlencoded; charset=utf-8"));
+      client->print(G("Request-Timeout: "));
+      client->println(requestTimeout);
+      client->println();
+      // Read from the nic or the IC buffer overflows with no warning and goes out to lunch
 
-        while (RxLoop && stringPos < 200) {
-          if (client->available()) { //During the longPoll HTTP request, this returns false unless data is updated
-            if (!DataRx)
-              DataRx= true;
+      #if EXOSITEDEBUG > 1
+       Serial.println(F("Sent"));
+      #endif
 
-            c = client->read();
-            rxdata[stringPos] = c;
+      while (RxLoop && stringPos < 200) {
+        if (client->available()) { //During the longPoll HTTP request, this returns false unless data is updated
+          if (!DataRx)
+            DataRx= true;
 
-            #if EXOSITEDEBUG > 2
-              Serial.print(c);
-            #endif
+          c = client->read();
+          rxdata[stringPos] = c;
 
-            stringPos += 1;
-          } else {
-            #if EXOSITEDEBUG > 4
-              Serial.println(F("No More Data"));
-            #endif
-            rxdata[stringPos] = 0;
+          #if EXOSITEDEBUG > 2
+            Serial.print(c);
+          #endif
 
-            if (DataRx) {
-              DataRx = false;
-              RxLoop = false;
+          stringPos += 1;
+        } else {
+          #if EXOSITEDEBUG > 4
+            Serial.println(F("No More Data"));
+          #endif
+          rxdata[stringPos] = 0;
 
-                #if EXOSITEDEBUG > 1
-                  Serial.println("HTTP Response:");
-                  Serial.println(rxdata);
-                #endif
+          if (DataRx) {
+            DataRx = false;
+            RxLoop = false;
 
-              if (strstr(rxdata, "HTTP/1.1 200 OK")) {
-                #ifdef EXOSITEDEBUG
-                  Serial.println(F("HTTP Status: 200"));
-                #endif
+              #if EXOSITEDEBUG > 1
+                Serial.println("HTTP Response:");
+                Serial.println(rxdata);
+              #endif
 
-                MasterLoop = false; //sets exit condition
+            if (strstr(rxdata, "HTTP/1.1 200 OK")) {
+              #ifdef EXOSITEDEBUG
+                Serial.println(F("HTTP Status: 200"));
+              #endif
+                
+              ret = true;
+              varPtr = strstr(rxdata, "\r\n\r\n") + 4;
 
-                ret = true;
-                varPtr = strstr(rxdata, "\r\n\r\n") + 4;
+              *returnString = (char*) realloc(*returnString, (rxdata + stringPos + 1) - varPtr);
 
-                *returnString = (char*) realloc(*returnString, (rxdata + stringPos + 1) - varPtr);
+              if(*returnString == 0)
+                break;
 
-                if(*returnString == 0)
-                  break;
+              strncpy(*returnString, varPtr, (rxdata + stringPos + 1) - varPtr);
+            } else if (strstr(rxdata, "HTTP/1.1 304 Not Modified")) {
+              ret = true;
+              #ifdef EXOSITEDEBUG
+                Serial.println(F("HTTP Status: 304"));
+              #endif
+            } else {
+              #ifdef EXOSITEDEBUG
+                Serial.println(F("Warning Unknown Response: "));
 
-                strncpy(*returnString, varPtr, (rxdata + stringPos + 1) - varPtr);
-              } else if (strstr(rxdata, "HTTP/1.1 304 Not Modified")) {
-                ret = true;
-                #ifdef EXOSITEDEBUG
-                  Serial.println(F("HTTP Status: 304"));
-                #endif
-              } else {
-                #ifdef EXOSITEDEBUG
-                  Serial.println(F("Warning Unknown Response: "));
+                varPt r = strstr(rxdata, "\n");
+                *varPtr = '\0';
 
-                  varPt r = strstr(rxdata, "\n");
-                  *varPtr = '\0';
-
-                  Serial.println(rxdata);
-                #endif
-              }
+                Serial.println(rxdata);
+              #endif
             }
           }
         }
-        if(stringPos >= 199){
-          Serial.println(F("Received too Much Content, Failing"));
+      }
+      if(stringPos >= 199){
+        Serial.println(F("Received too Much Content, Failing"));
 
-            #if EXOSITEDEBUG > 2
-              Serial.println("Received So Far");
-              Serial.println(rxdata);
-              Serial.println("Also Received:");
-            #endif
+          #if EXOSITEDEBUG > 2
+            Serial.println("Received So Far");
+            Serial.println(rxdata);
+            Serial.println("Also Received:");
+          #endif
 
-          while (client->available()) {
-            c = client->read();
+        while (client->available()) {
+          c = client->read();
 
-            #if EXOSITEDEBUG > 2
-              Serial.write(c);
-            #endif
-          }
-          return false;
-        }
-        if(millis() > requestTimeout){
-          MasterLoop = false;
-          #ifdef EXOSITEDEBUG
-            Serial.println(F("No Data was Modified During Requested Polling Period"));
+          #if EXOSITEDEBUG > 2
+            Serial.write(c);
           #endif
         }
+        return false;
       }
     }
-    if(timeout_time <= time_now){
-      Serial.println(F("Error: Can't Open Connection to Exosite, HTTP Response Timeout"));
-      client->stop();
-
-      MasterLoop = false;
-    } 
   }
+  if(timeout_time <= time_now){
+    Serial.println(F("Error: Can't Open Connection to Exosite, HTTP Response Timeout"));
+    client->stop();
+  } 
   #ifdef EXOSITEDEBUG
-      Serial.println(F("End of Polling"));
-    #endif
+    Serial.println(F("End of Polling"));
+  #endif
 
-    return ret;
+  return ret;
 }
 
 /*==============================================================================

@@ -75,7 +75,6 @@ class Exosite
     boolean ret;
     int stringPos;
     boolean DataRx;
-    boolean MasterLoop;
     boolean RxLoop;
     char c;
     unsigned long requestTimeout;
