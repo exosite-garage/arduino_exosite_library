@@ -32,22 +32,19 @@
 *
 * constructor for Exosite class
 *=============================================================================*/
-Exosite::Exosite(Client *_client)
-{
+Exosite::Exosite(Client *_client){
   client = _client;
   #if !defined(ESP8266)
   fetchNVCIK();
   #endif
 }
 
-Exosite::Exosite(const char *_cik, Client *_client)
-{
+Exosite::Exosite(const char *_cik, Client *_client){
   strncpy(cik, _cik, 41);
   client = _client;
 }
 
-Exosite::Exosite(const String _cik, Client *_client)
-{
+Exosite::Exosite(const String _cik, Client *_client){
   _cik.toCharArray(cik, 41);
   client = _client;
 }
@@ -68,11 +65,13 @@ void Exosite::begin(){
 *
 * set a custom domain to contact
 *=============================================================================*/
-void Exosite::setDomain(const char *domain)
-{
+void Exosite::setDomain(const char *domain){
   serverName = domain;
 }
 
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//Data Procedutes
 /*==============================================================================
 * writeRead
 *
@@ -226,7 +225,6 @@ boolean Exosite::writeRead(const char* writeString, const char* readString, char
 
   return ret;
 }
-
 /*==============================================================================
 * writeRead
 *
@@ -395,6 +393,12 @@ boolean Exosite::read(const char* readString, char** returnString){
               break;
 
             strncpy(*returnString, varPtr, (rxdata + stringPos + 1) - varPtr);
+          } else if(strstr(rxdata, "HTTP/1.1 204 No Content")){
+            #ifdef EXOSITEDEBUG
+              Serial.println(F("HTTP Status: 204"));
+            #endif
+  
+            ret = true;
           } else {
             #ifdef EXOSITEDEBUG
               Serial.println(F("Warning Unknown Response: "));
@@ -443,7 +447,6 @@ boolean Exosite::read(const char* readString, char** returnString){
 
   return ret;
 }
-
 /*==============================================================================
 * read
 *
@@ -513,6 +516,7 @@ boolean Exosite::read(const String &readString, String &returnString){
 
   return ret;
 }
+
 /*==============================================================================
 * longPoll
 *
@@ -614,6 +618,12 @@ boolean Exosite::longPoll(const int timeoutRequest, const char* readString, char
                 break;
 
               strncpy(*returnString, varPtr, (rxdata + stringPos + 1) - varPtr);
+            } else if(strstr(rxdata, "HTTP/1.1 204 No Content")){
+            #ifdef EXOSITEDEBUG
+              Serial.println(F("HTTP Status: 204"));
+            #endif
+  
+            ret = true;
             } else if (strstr(rxdata, "HTTP/1.1 304 Not Modified")) {
               ret = true;
               #ifdef EXOSITEDEBUG
@@ -662,7 +672,6 @@ boolean Exosite::longPoll(const int timeoutRequest, const char* readString, char
 
   return ret;
 }
-
 /*==============================================================================
 * longPoll
 *
@@ -732,6 +741,7 @@ boolean Exosite::longPoll(const int timeoutRequest, const String &readString, St
 
   return ret;
 }
+
 /*==============================================================================
 * write
 *
@@ -852,8 +862,6 @@ boolean Exosite::write(const char* writeString){
 
   return ret;
 }
-
-
 /*==============================================================================
 * write
 *
@@ -917,13 +925,18 @@ boolean Exosite::write(const String &writeString){
 
   return ret;
 }
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//Provisioning Procedures
 /*==============================================================================
-* provision
+* activate
 *
-* Provision on Exosite Platform, activate device and get cik.
+* activate on Exosite Platform, activate device and get cik.
 *=============================================================================*/
-boolean Exosite::provision(const char* vendorString, const char* modelString, const char* snString){
+boolean Exosite::activate(const char* vendorString, const char* modelString, const char* snString){
   ret = false;
   stringPos = 0;
   DataRx= false;
@@ -1048,9 +1061,9 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
 
 
       if(timeout_time <= time_now){
-#ifdef EXOSITEDEBUG
-        Serial.println(F("HTTP Response Timeout"));
-#endif
+        #ifdef EXOSITEDEBUG
+          Serial.println(F("HTTP Response Timeout"));
+        #endif
         client->stop();
       }
 
@@ -1081,56 +1094,24 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
   free(writeString);
 
   #ifdef EXOSITEDEBUG
-    Serial.println(F("End of Provision"));
+    Serial.println(F("End of Activate"));
   #endif
 
   return ret;
 }
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 
-/*==============================================================================
-* saveNVCIK
-*
-* Write the CIK to EEPROM
-*=============================================================================*/
-boolean Exosite::saveNVCIK(){
-  for(int i = 0; i < 40; i++){
-    EEPROM.write(CIK_EEPROM_ADDRESS + i, cik[i]);
-  }
 
-  return true;
-}
-
-
-
-/*==============================================================================
-* fetchNVCIK
-*
-* Fetch the CIK from EEPROM
-*=============================================================================*/
-boolean Exosite::fetchNVCIK(){
-  char tempBuf[41];
-
-  for(int i = 0; i < 40; i++){
-    tempBuf[i] = EEPROM.read(CIK_EEPROM_ADDRESS + i);
-  }
-  tempBuf[40] = 0;
-
-  if(strlen(tempBuf) == 40){
-    strcpy(cik, tempBuf);
-    return true;
-  }else{
-    return false;
-  }
-}
-
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//Utility Procedures
 /*==============================================================================
 * time
 *
 * Gets the server time as a unix timestamp.
 *=============================================================================*/
-unsigned long Exosite::time(){
+unsigned long Exosite::timestamp(){
   unsigned long timestamp = 0;
   stringPos = 0;
   DataRx= false;
@@ -1211,9 +1192,9 @@ unsigned long Exosite::time(){
 
     
       if(timeout_time <= time_now){
-#ifdef EXOSITEDEBUG
-        Serial.println(F("HTTP Response Timeout"));
-#endif
+        #ifdef EXOSITEDEBUG
+          Serial.println(F("HTTP Response Timeout"));
+        #endif
         client->stop();
       }
    
@@ -1247,6 +1228,45 @@ unsigned long Exosite::time(){
 
   return timestamp;
 }
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+/*==============================================================================
+* saveNVCIK
+*
+* Write the CIK to EEPROM
+*=============================================================================*/
+boolean Exosite::saveNVCIK(){
+  for(int i = 0; i < 40; i++){
+    EEPROM.write(CIK_EEPROM_ADDRESS + i, cik[i]);
+  }
+
+  return true;
+}
+
+
+
+/*==============================================================================
+* fetchNVCIK
+*
+* Fetch the CIK from EEPROM
+*=============================================================================*/
+boolean Exosite::fetchNVCIK(){
+  char tempBuf[41];
+
+  for(int i = 0; i < 40; i++){
+    tempBuf[i] = EEPROM.read(CIK_EEPROM_ADDRESS + i);
+  }
+  tempBuf[40] = 0;
+
+  if(strlen(tempBuf) == 40){
+    strcpy(cik, tempBuf);
+    return true;
+  }else{
+    return false;
+  }
+}
+
+
 
 boolean Exosite::isHex(char *str, int len){
   for(int i = 0; i < len; i++){
@@ -1258,45 +1278,4 @@ boolean Exosite::isHex(char *str, int len){
   }
 
   return true;
-}
-
-
-/*==============================================================================
-* DEPRECIATED METHODS
-*=============================================================================*/
-
-/*==============================================================================
-* sendToCloud
-*
-* send data to cloud
-*=============================================================================*/
-int Exosite::sendToCloud(String res, int value){
-  String readString = "";
-  String returnString = "";
-  String writeString;
-  writeString = res + "=" + value;
-
-  if(this->writeRead(writeString, readString, returnString)){
-    return 1;
-  }else{
-    Serial.println(F("Error Communicating with Exosite"));
-    return 0;
-  }
-}
-
-
-/*==============================================================================
-* readFromCloud
-*
-* read data from cloud
-*=============================================================================*/
-int Exosite::readFromCloud(String readString ,String* returnString){
-  String writeString = "";
-
-  if(this->writeRead(writeString, readString, *returnString)){
-    return 1;
-  }else{
-    Serial.println(F("Error Communicating with Exosite"));
-    return 0;
-  }
 }

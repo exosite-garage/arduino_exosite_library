@@ -111,16 +111,12 @@ class Exosite
     boolean write(const char* writeString);
     boolean write(const String &writeString);
 
-    boolean provision(const char* vendorString, const char* modelString, const char* snString);
+    boolean activate(const char* vendorString, const char* modelString, const char* snString);
 
     boolean saveNVCIK();
     boolean fetchNVCIK();
 
-    unsigned long time();
-
-    // Depreciated Methods
-    int sendToCloud(String res, int value);
-    int readFromCloud(String res ,String* pResult);
+    unsigned long timestamp();
 
 };
 
