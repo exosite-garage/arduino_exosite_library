@@ -28,7 +28,7 @@
 #include <EEPROM.h>
 #include <SPI.h>
 #include <ESP8266WiFi.h>
-#include <Exosite-dev.h>
+#include <Exosite.h>
 
 
 #define DHTPIN 2     // what digital pin we're connected to
@@ -52,10 +52,10 @@ const int REPORT_INTERVAL = 1000; //milliseconds period for reporting to Exosite
 const int SENSOR_INTERVAL = 250;
 
 // Use these variables to customize what dataports are read and written to.
-String readString = "state";
+String writeString = "randomNumber=";
 String returnString;
 
-int timeoutRequest = 650;
+int randomNumber = 0;
 /*==============================================================================
 * End of Configuration Variables
 *=============================================================================*/
@@ -103,11 +103,11 @@ void setup() {
      digitalWrite(LED_PIN, HIGH);
      delay(100);
   }
-  if (exosite.provision(productId, productId, macString)) {
-        Serial.println("setup: Provision Succeeded");
+  if (exosite.activate(productId, productId, macString)) {
+        Serial.println("setup: Activation Succeeded");
         EEPROM.commit();
   } else {
-        Serial.println("setup: Provision Check Done");
+        Serial.println("setup: Activation Check Done");
   }
 
   // Setup Sensor Interface
@@ -120,66 +120,27 @@ void setup() {
 *=============================================================================*/
 void loop()
 {
+  randomNumber = rand() % 100;
   
   int8_t index = 0;
   int8_t lastIndex = -1;
   float h,t;
 
+  Serial.println("==========================");
+  delay(5000);
+
+  Serial.print("Random Number =   ");
+  Serial.println(randomNumber);
+
   if (prevSendTime + REPORT_INTERVAL < millis() || millis() < prevSendTime || isnan(h) || isnan(t) ) {
     int uptime = millis()/1000;
     
-    Serial.println("==========================");
-    
-    if (exosite.longPoll(timeoutRequest, readString, returnString)) {
-      //Serial.println("Succeeded");
+    if (exosite.write(writeString + randomNumber)) {
+      Serial.println("Succeeded");
       exosite_comm_errors = 0;
       comm_errors = 0;
       prevSendTime = millis();
-      //Handle Response Message
-      for(;;) {
-        index = returnString.indexOf("=", lastIndex+1);
-        if(index != 0) {
-          String alias = "";
-          String tempString = returnString.substring(lastIndex+1, index);
-          Serial.print(F("exo: Dataport - "));
-          Serial.print(tempString);
-          lastIndex = returnString.indexOf("&", index+1);
-          alias = tempString;
-          if(lastIndex != -1){
-            tempString = returnString.substring(index+1, lastIndex);
-          }else{
-            tempString = returnString.substring(index+1);
-          }
-
-
-          //Handle response for pin D13 to control LED
-          if (alias == "state"){
-            if(tempString == "1"){
-              digitalWrite(LED_PIN, LOW);
-              Serial.println("turn on Light");
-            }else if(tempString == "0"){
-              digitalWrite(LED_PIN, HIGH);
-              Serial.println("turn off Light");
-            }else{
-              Serial.print(F("Unknown Setting: "));
-              Serial.println(tempString);
-            }
-          } else if (alias == "msg"){
-            Serial.print("Message: ");
-            Serial.println(tempString);
-          } else {
-            tempString = "0"; 
-            Serial.println("Unknown Alias Dataport");
-          }
-
-          if(lastIndex == -1)
-            break;
-
-        } else{
-          Serial.println(F("No Index"));
-          break;
-        }
-      }
+      
 
     } else {
       //Serial.println("HANDLER: network or platform api request issue");
@@ -197,12 +158,12 @@ void loop()
       Serial.print(F(", Device Identifier (MAC Address): "));
       Serial.println(macString);
 
-      if (exosite.provision(productId, productId, macString)) {
-        Serial.println("exo: Provision: New Activation");
+      if (exosite.activate(productId, productId, macString)) {
+        Serial.println("exo: Activate: New Activation");
         EEPROM.commit();
 
       } else {
-        Serial.println("exo: Provision: No New Activation");
+        Serial.println("exo: Activate: No New Activation");
 
       }
       exosite_comm_errors = 0;

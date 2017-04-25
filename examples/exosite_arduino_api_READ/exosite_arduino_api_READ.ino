@@ -28,7 +28,7 @@
 #include <EEPROM.h>
 #include <SPI.h>
 #include <ESP8266WiFi.h>
-#include <Exosite-dev.h>
+#include <Exosite.h>
 
 
 #define DHTPIN 2     // what digital pin we're connected to
@@ -103,11 +103,11 @@ void setup() {
      digitalWrite(LED_PIN, HIGH);
      delay(100);
   }
-  if (exosite.provision(productId, productId, macString)) {
-        Serial.println("setup: Provision Succeeded");
+  if (exosite.activate(productId, productId, macString)) {
+        Serial.println("setup: Activation Succeeded");
         EEPROM.commit();
   } else {
-        Serial.println("setup: Provision Check Done");
+        Serial.println("setup: Activation Check Done");
   }
 
   // Setup Sensor Interface
@@ -198,12 +198,12 @@ Serial.println("==========================");
       Serial.print(F(", Device Identifier (MAC Address): "));
       Serial.println(macString);
 
-      if (exosite.provision(productId, productId, macString)) {
-        Serial.println("exo: Provision: New Activation");
+      if (exosite.activate(productId, productId, macString)) {
+        Serial.println("exo: Activate: New Activation");
         EEPROM.commit();
 
       } else {
-        Serial.println("exo: Provision: No New Activation");
+        Serial.println("exo: Activate: No New Activation");
 
       }
       exosite_comm_errors = 0;
