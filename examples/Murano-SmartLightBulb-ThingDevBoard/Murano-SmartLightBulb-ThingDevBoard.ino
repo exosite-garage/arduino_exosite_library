@@ -38,14 +38,14 @@
 #define TEMPUNIT "F" //Change to "C" for Celsius
 
 /*==============================================================================
-* WIFI Configuration Variables - Change these variables to your own settings.
-*=============================================================================*/
+ * WIFI Configuration Variables - Change these variables to your own settings.
+ *=============================================================================*/
 const char ssid[]     = "<YOUR_SSID_HERE>";
 const char password[] = "<YOUR_WIFI_PASSWORD_HERE>";
 
 /*==============================================================================
-* EXOSITE MURANO Configuration Variables - Change these variables to your own settings.
-*=============================================================================*/
+ * EXOSITE MURANO Configuration Variables - Change these variables to your own settings.
+ *=============================================================================*/
 #define productId "<MURANO_PRODUCT_ID_HERE>"
 
 const int REPORT_INTERVAL = 1000; //milliseconds period for reporting to Exosite.com
@@ -56,11 +56,12 @@ String readString = "state";
 String writeString = "temperature=";
 String writeString2 = "&uptime=";
 String writeString3 = "&humidity=";
+String writeString4 = "state=";
 String returnString;
 
 /*==============================================================================
-* End of Configuration Variables
-*=============================================================================*/
+ * End of Configuration Variables
+ *=============================================================================*/
 
 char macString[18];  // Used to store a formatted version of the MAC Address
 byte macData[WL_MAC_ADDR_LENGTH];
@@ -68,21 +69,23 @@ long unsigned int prevSendTime = 0;
 long unsigned int prevSensorTime = 0;
 int exosite_comm_errors = 0;
 int comm_errors = 0;
+int s = 0;
+bool initial = true;
 
 WiFiClient client;
 Exosite exosite(&client);
 DHT dht(DHTPIN, DHTTYPE);
 
 /*==============================================================================
-* setup
-*
-* Arduino setup function.
-*=============================================================================*/
+ * setup
+ *
+ * Arduino setup function.
+ *=============================================================================*/
 void setup() {
   Serial.begin(112500);
   EEPROM.begin(40);
   exosite.begin();
-  exosite.setDomain(productId".m2.exosite.com");
+  exosite.setDomain(productId".devmode-m2.exosite.io");
 
   //SET UP IO PINS
   pinMode(LED_PIN, OUTPUT);
@@ -103,16 +106,16 @@ void setup() {
   Serial.println(macString);
 
   for (int c=0; c<8; c++) {
-     digitalWrite(LED_PIN, LOW);
-     delay(100);
-     digitalWrite(LED_PIN, HIGH);
-     delay(100);
+    digitalWrite(LED_PIN, LOW);
+    delay(100);
+    digitalWrite(LED_PIN, HIGH);
+    delay(100);
   }
   if (exosite.provision(productId, productId, macString)) {
-        Serial.println("setup: Provision Succeeded");
-        EEPROM.commit();
+    Serial.println("setup: Provision Succeeded");
+    EEPROM.commit();
   } else {
-        Serial.println("setup: Provision Check Done");
+    Serial.println("setup: Provision Check Done");
   }
 
   // Setup Sensor Interface
@@ -120,16 +123,23 @@ void setup() {
 
 }
 /*==============================================================================
-* loop
-*
-* Arduino loop function.
-*=============================================================================*/
+ * loop
+ *
+ * Arduino loop function.
+ *=============================================================================*/
 void loop()
 {
   int8_t index = 0;
   int8_t lastIndex = -1;
   float h,t;
-
+  
+  // Set initial value for "state", lightbulb off (0)
+  if (initial)
+  {
+    exosite.writeRead(writeString4 + String(s), readString, returnString);
+    initial = false;
+  }
+  
   if (prevSensorTime + SENSOR_INTERVAL < millis() || millis() < prevSensorTime)
   {
     h = dht.readHumidity();
@@ -162,53 +172,57 @@ void loop()
   if (prevSendTime + REPORT_INTERVAL < millis() || millis() < prevSendTime || isnan(h) || isnan(t) ) {
     int uptime = millis()/1000;
     digitalWrite(LED_PIN, LOW);
-    if (exosite.writeRead(writeString +String(t) + writeString2 + String(uptime) + writeString3 + String(h), readString, returnString)) {
+    if (exosite.writeRead(writeString + String(t) + writeString2 + String(uptime) + writeString3 + String(h), readString, returnString)) {
       //Serial.println("Succeeded");
       exosite_comm_errors = 0;
       comm_errors = 0;
       prevSendTime = millis();
       //Handle Response Message
-      for(;;) {
-        index = returnString.indexOf("=", lastIndex+1);
-        if(index != 0) {
+      for (;;) {
+        index = returnString.indexOf("=", lastIndex + 1);
+        if (index != 0) {
           String alias = "";
-          String tempString = returnString.substring(lastIndex+1, index);
+          String tempString = returnString.substring(lastIndex + 1, index);
           Serial.print(F("exo: Dataport - "));
           Serial.print(tempString);
-          lastIndex = returnString.indexOf("&", index+1);
+          lastIndex = returnString.indexOf("&", index + 1);
           alias = tempString;
-          if(lastIndex != -1){
-            tempString = returnString.substring(index+1, lastIndex);
-          }else{
-            tempString = returnString.substring(index+1);
+          if (lastIndex != -1) {
+            tempString = returnString.substring(index + 1, lastIndex);
+          } else {
+            tempString = returnString.substring(index + 1);
           }
           Serial.print("=");
           Serial.print(tempString);
           Serial.print(" ->");
 
           //Handle response for pin D13 to control LED
-          if (alias == "state"){
-            if(tempString == "1"){
+          if (alias == "state") {
+            if (tempString == "1") {
+              s = 1;
               digitalWrite(LIGHTBULB_PIN, LOW);
               Serial.println("turn on Light");
-            }else if(tempString == "0"){
+              exosite.writeRead(writeString4 + String(s), readString, returnString);
+            } else if (tempString == "0") {
+              s = 0;
               digitalWrite(LIGHTBULB_PIN, HIGH);
               Serial.println("turn off Light");
-            }else{
+              exosite.writeRead(writeString4 + String(s), readString, returnString);
+            } else {
               Serial.print(F("Unknown Setting: "));
               Serial.println(tempString);
             }
-          } else if (alias == "msg"){
+          } else if (alias == "msg") {
             Serial.print("Message: ");
             Serial.println(tempString);
           } else {
             Serial.println("Unknown Alias Dataport");
           }
 
-          if(lastIndex == -1)
+          if (lastIndex == -1)
             break;
 
-        } else{
+        } else {
           Serial.println(F("No Index"));
           break;
         }
@@ -218,21 +232,21 @@ void loop()
       //Serial.println("HANDLER: network or platform api request issue");
       exosite_comm_errors++;
       comm_errors++;
-      for (int c=0; c<4; c++) {
-         digitalWrite(LED_PIN, LOW);
-         delay(200);
-         digitalWrite(LED_PIN, HIGH);
-         delay(200);
+      for (int c = 0; c < 4; c++) {
+        digitalWrite(LED_PIN, LOW);
+        delay(200);
+        digitalWrite(LED_PIN, HIGH);
+        delay(200);
       }
     }
     digitalWrite(LED_PIN, HIGH);
 
     if (exosite_comm_errors == 5) {
-       for (int c=0; c<3; c++) {
-         digitalWrite(LED_PIN, LOW);
-         delay(500);
-         digitalWrite(LED_PIN, HIGH);
-         delay(500);
+      for (int c = 0; c < 3; c++) {
+        digitalWrite(LED_PIN, LOW);
+        delay(500);
+        digitalWrite(LED_PIN, HIGH);
+        delay(500);
       }
       Serial.print("exo: Check Provisioning - ");
       Serial.print("Murano Product ID: ");
@@ -246,11 +260,11 @@ void loop()
 
       } else {
         Serial.println("exo: Provision: No New Activation");
-        for (int c=0; c<4; c++) {
-           digitalWrite(LED_PIN, LOW);
-           delay(500);
-           digitalWrite(LED_PIN, HIGH);
-           delay(500);
+        for (int c = 0; c < 4; c++) {
+          digitalWrite(LED_PIN, LOW);
+          delay(500);
+          digitalWrite(LED_PIN, HIGH);
+          delay(500);
         }
       }
       exosite_comm_errors = 0;
@@ -266,10 +280,10 @@ void loop()
 }
 
 /*==============================================================================
-* connectWifi
-*
-* Use in setup to connect to local Wifi network
-*=============================================================================*/
+ * connectWifi
+ *
+ * Use in setup to connect to local Wifi network
+ *=============================================================================*/
 void connectWifi() {
   WiFi.mode(WIFI_STA); // Need for deepSleep
   // Connect to WiFi network
