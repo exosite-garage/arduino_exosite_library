@@ -123,7 +123,7 @@ unsigned long Exosite:time();
 
 Returns the current time as a unix timestamp (number of seconds since 1970-01-01) or 0 for error.
 
-begin (ESP8266 Only)
+begin (ESP8266 and CC3200 Only)
 --------------------
 
 ```cpp
@@ -149,6 +149,9 @@ You will also need to remove `exosite.init();` and add `Ethernet.begin(macData);
 
 Release Info
 ============
+**v2.6.0 - Release 2017-01-05**
+ - Add support for Engeria and CC3200 LaunchPads
+
 **v2.5.2 - Release 2016-06-15**
  - Re-release for versioning problems.
 
