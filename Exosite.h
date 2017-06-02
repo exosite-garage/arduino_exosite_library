@@ -66,7 +66,7 @@ class Exosite
   private:
     class Client* client;
     char cik[41];
-    const char *serverName = "m2.exosite.com";
+    const char *serverName = "m2.exosite.io";
     char rxdata[200];
     char aliasList[50];
     char* varPtr;
@@ -76,7 +76,7 @@ class Exosite
     boolean DataRx;
     boolean RxLoop;
     char c;
-    unsigned long requestTimeout;
+    unsigned long longPollTimeoutRequest;
     unsigned long timeout_time;
     unsigned long time_now;
     unsigned long timeout;

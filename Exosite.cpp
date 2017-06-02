@@ -527,7 +527,7 @@ boolean Exosite::longPoll(const int timeoutRequest, const char* readString, char
   stringPos = 0;
   DataRx= false;
   RxLoop = true;
-  requestTimeout = timeoutRequest*1000; //passes in the timeoutRequest and converts from seconds (user input) to milliseconds
+  longPollTimeoutRequest = timeoutRequest*1000; //passes in the timeoutRequest and converts from seconds (user input) to milliseconds
   timeout_time = 0;
   time_now = 0;
   timeout = 3000; // Temporary replacement as client->available() is not suited to handle longPoll
@@ -568,7 +568,7 @@ boolean Exosite::longPoll(const int timeoutRequest, const char* readString, char
       client->println(cik);
       client->println(G("Accept: application/x-www-form-urlencoded; charset=utf-8"));
       client->print(G("Request-Timeout: "));
-      client->println(requestTimeout);
+      client->println(longPollTimeoutRequest);
 
       if(strlen(currentTimestamp)>0){
         client->print("If-Modified-Since: ");
