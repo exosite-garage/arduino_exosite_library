@@ -2,20 +2,20 @@
 //
 // exosite.h - Prototypes for the Exosite Cloud API
 //
-// Copyright (c) 2012 Exosite LLC.  All rights reserved.
-// 
-// Redistribution and use in source and binary forms, with or without 
+// Copyright (c) 2012-2017 Exosite LLC.  All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
 
 //  * Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-//  * Redistributions in binary form must reproduce the above copyright 
+//  * Redistributions in binary form must reproduce the above copyright
 //    notice, this list of conditions and the following disclaimer in the
 //    documentation and/or other materials provided with the distribution.
 //  * Neither the name of Exosite LLC nor the names of its contributors may
-//    be used to endorse or promote products derived from this software 
+//    be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
 // NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -28,7 +28,7 @@
 #ifndef Exosite_h
 #define Exosite_h
 
-#define ACTIVATOR_VERSION   "2.5.2"
+#define ACTIVATOR_VERSION   "2.5.3"
 
 // Select a Debug Level: 
 //#define EXOSITEDEBUG 1
@@ -66,7 +66,7 @@ class Exosite
   private:
     class Client* client;
     char cik[41];
-    const char *serverName = "m2.exosite.com";
+    const char *serverName = "m2.exosite.io";
     char rxdata[200];
     char aliasList[50];
     char* varPtr;
@@ -76,6 +76,7 @@ class Exosite
     boolean DataRx;
     boolean RxLoop;
     char c;
+    unsigned long longPollTimeoutRequest;
     unsigned long timeout_time;
     unsigned long time_now;
     unsigned long timeout;
@@ -101,17 +102,30 @@ class Exosite
     boolean writeRead(const char* writeString,const char* readString, char** returnString);
     boolean writeRead(const String &writeString, const String &readString, String &returnString);
 
+    boolean read(const char* readString, char** returnString);
+    boolean read(const String &readString, String &returnString);
+
+    boolean longPoll(const int timeoutRequest, const char* readString, char** returnString, const char* currentTimestamp);
+    boolean longPoll(const int timeoutRequest, const String &readString, String &returnString, const String = "");
+
+    boolean write(const char* writeString);
+    boolean write(const String &writeString);
+
     boolean provision(const char* vendorString, const char* modelString, const char* snString);
+
+    boolean listAvailableContent(const char* vendorString, const char* modelString, char** returnString);
+    boolean listAvailableContent(const String &vendorString, const String &modelString, String &returnString);
+
+    boolean getContentInfo(const char* vendorString, const char* modelString, const char* idString, char** returnString);
+    boolean getContentInfo(const String &vendorString, const String &modelString, const String &idString, String &returnString);
+
+    boolean downloadContent(const char* vendorString, const char* modelString, const char* idString, char** returnString, const char* byteRange);
+    boolean downloadContent(const String &vendorString, const String &modelString, const String &idString, String &returnString,  const String = "");
 
     boolean saveNVCIK();
     boolean fetchNVCIK();
 
-    unsigned long time();
-
-    // Depreciated Methods
-    int sendToCloud(String res, int value);
-    int readFromCloud(String res ,String* pResult);
-
+    unsigned long timestamp();
 };
 
 #endif
