@@ -150,7 +150,7 @@ You will also need to remove `exosite.init();` and add `Ethernet.begin(macData);
 Release Info
 ============
 **v2.5.3 - Release 2017-06-06**
- - Added functions.
+ - Added complete HTTP API support.
 
 **v2.5.2 - Release 2016-06-15**
  - Re-release for versioning problems.

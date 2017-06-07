@@ -111,7 +111,7 @@ class Exosite
     boolean write(const char* writeString);
     boolean write(const String &writeString);
 
-    boolean activate(const char* vendorString, const char* modelString, const char* snString);
+    boolean provision(const char* vendorString, const char* modelString, const char* snString);
 
     boolean listAvailableContent(const char* vendorString, const char* modelString, char** returnString);
     boolean listAvailableContent(const String &vendorString, const String &modelString, String &returnString);

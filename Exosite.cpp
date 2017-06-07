@@ -939,11 +939,11 @@ boolean Exosite::write(const String &writeString){
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //Provisioning Procedures
 /*==============================================================================
-* activate
+* Provision
 *
-* activate on Exosite Platform, activate device and get cik.
+* Provisions on Exosite Platform, activate device and get cik.
 *=============================================================================*/
-boolean Exosite::activate(const char* vendorString, const char* modelString, const char* snString){
+boolean Exosite::provision(const char* vendorString, const char* modelString, const char* snString){
   ret = false;
   stringPos = 0;
   DataRx= false;
@@ -1029,7 +1029,7 @@ boolean Exosite::activate(const char* vendorString, const char* modelString, con
           #endif
 
           if (strstr(rxdata, "HTTP/1.1 200 OK")) {
-            Serial.println(F("Activated Successfully"));
+            Serial.println(F("Provisioned Successfully"));
             varPtr = strstr(rxdata, "\r\n\r\n") + 4;
 
             if(strlen(varPtr) == 40 && this->isHex(varPtr, 40)){
@@ -1101,7 +1101,7 @@ boolean Exosite::activate(const char* vendorString, const char* modelString, con
   free(writeString);
 
   #ifdef EXOSITEDEBUG
-    Serial.println(F("End of Activate"));
+    Serial.println(F("End of Provision"));
   #endif
 
   return ret;
