@@ -1940,7 +1940,9 @@ boolean Exosite::fetchNVCIK(){
 }
 
 
-
+//This was previously used to check CIK values, however in recent updates, CIKs are
+//no longer restricted to hex characters. This function is being left in because it 
+//might have to be used in the future
 boolean Exosite::isHex(char *str, int len){
   for(int i = 0; i < len; i++){
     if(!((str[i] >= '0' && str[i] <= '9') ||
