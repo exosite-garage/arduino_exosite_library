@@ -1032,7 +1032,7 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
             Serial.println(F("Provisioned Successfully"));
             varPtr = strstr(rxdata, "\r\n\r\n") + 4;
 
-            if(strlen(varPtr) == 40 && this->isHex(varPtr, 40)){
+            if(strlen(varPtr) == 40){
               strncpy(cik, varPtr, 41);
               saveNVCIK();
               ret = true;
@@ -1937,18 +1937,4 @@ boolean Exosite::fetchNVCIK(){
   }else{
     return false;
   }
-}
-
-
-
-boolean Exosite::isHex(char *str, int len){
-  for(int i = 0; i < len; i++){
-    if(!((str[i] >= '0' && str[i] <= '9') ||
-         (str[i] >= 'A' && str[i] <= 'F') ||
-         (str[i] >= 'a' && str[i] <= 'f'))){
-      return false;
-    }
-  }
-
-  return true;
 }
