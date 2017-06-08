@@ -1938,3 +1938,18 @@ boolean Exosite::fetchNVCIK(){
     return false;
   }
 }
+
+
+
+boolean Exosite::isHex(char *str, int len){
+  for(int i = 0; i < len; i++){
+    if(!((str[i] >= '0' && str[i] <= '9') ||
+         (str[i] >= 'A' && str[i] <= 'F') ||
+         (str[i] >= 'a' && str[i] <= 'f'))){
+      return false;
+    }
+  }
+
+  return true;
+}
+
