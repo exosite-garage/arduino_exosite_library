@@ -59,7 +59,7 @@ Exosite::Exosite(const String _cik, Client *_client)
 *=============================================================================*/
 #if defined(ESP8266) || defined(SL_DRIVER_VERSION)
 void Exosite::begin(){
-  fetchNVCIK();
+  //fetchNVCIK();
 }
 #endif
 
@@ -85,7 +85,7 @@ boolean Exosite::writeRead(const char* writeString, const char* readString, char
   RxLoop = true;
   timeout_time = 0;
   time_now = 0;
-  timeout = 3000; // 3 seconds
+  timeout = 20000; // 20 seconds
   varPtr = aliasList;
 
   Serial.print(F("Connecting to Exosite..."));
@@ -93,9 +93,15 @@ boolean Exosite::writeRead(const char* writeString, const char* readString, char
   if (!client->connected()) {
     Serial.print("No Existing Connection, Opening One...");
     client->stop();
+/*
+
 #ifdef SL_DRIVER_VERSION
     client->sslConnect(serverName,443);
 #else /*CC3200*/
+
+client->connect(serverName,80);
+/*
+
     client->connect(serverName,80);
 #endif /*CC3200*/
   }
@@ -345,9 +351,18 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
   if (!client->connected()) {
     Serial.print("No Existing Connection, Opening One...");
     client->stop();
+
+
+/*
+
 #ifdef SL_DRIVER_VERSION
     client->sslConnect(serverName,443);
 #else /*CC3200*/
+
+client->connect(serverName,80);
+
+/*
+
     client->connect(serverName,80);
 #endif /*CC3200*/
   }
@@ -356,7 +371,7 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
     client->flush();
     Serial.println(F("Connected"));
 
-    // Send request using Exosite basic HTTP API
+// Send request using Exosite basic HTTP API
     client->println(G("POST /provision/activate HTTP/1.1"));
     client->print(G("Host: "));
     client->println(serverName);
@@ -399,9 +414,9 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
             Serial.println(F("Activated Successfully"));
             varPtr = strstr(rxdata, "\r\n\r\n") + 4;
 
-            if(strlen(varPtr) == 40 && this->isHex(varPtr, 40)){
+            if(strlen(varPtr) == 40){
               strncpy(cik, varPtr, 41);
-              saveNVCIK();
+              //saveNVCIK();
               ret = true;
             }else{
               Serial.print(F("CRITICAL: Got 200 Response, Wasn't a Valid CIK"));
@@ -438,6 +453,7 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
 #ifdef EXOSITEDEBUG
         Serial.println(F("HTTP Response Timeout"));
 #endif
+Serial.println("BRUH");
         client->stop();
       }
 
@@ -481,6 +497,7 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
 *
 * Write the CIK to EEPROM
 *=============================================================================*/
+                                                                                                /*
 #ifdef SL_DRIVER_VERSION
 #define CIK_LENGTH 40
 #define CIK_FILENAME "exosite_cik.txt"
@@ -540,6 +557,8 @@ boolean Exosite::saveNVCIK(){
 *
 * Fetch the CIK from EEPROM
 *=============================================================================*/
+                                                                                                /*
+
 #ifdef SL_DRIVER_VERSION
 boolean Exosite::fetchNVCIK()
 {
@@ -732,6 +751,7 @@ unsigned long Exosite::time(){
   return timestamp;
 }
 
+/*
 boolean Exosite::isHex(char *str, int len){
   for(int i = 0; i < len; i++){
     if(!((str[i] >= '0' && str[i] <= '9') ||
@@ -743,7 +763,7 @@ boolean Exosite::isHex(char *str, int len){
 
   return true;
 }
-
+/*
 
 /*==============================================================================
 * DEPRECIATED METHODS

@@ -73,7 +73,7 @@ class Exosite
   private:
     class Client* client;
     char cik[41];
-    const char *serverName = "m2.exosite.com";
+    const char *serverName = "m2.exosite.io";
     char rxdata[200];
     char aliasList[50];
     char* varPtr;
