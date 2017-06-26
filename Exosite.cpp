@@ -453,7 +453,6 @@ client->connect(serverName,80);
 #ifdef EXOSITEDEBUG
         Serial.println(F("HTTP Response Timeout"));
 #endif
-Serial.println("BRUH");
         client->stop();
       }
 
