@@ -434,7 +434,6 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
 #ifdef EXOSITEDEBUG
         Serial.println(F("HTTP Response Timeout"));
 #endif
-Serial.println("BRUH");
         client->stop();
       }
 
