@@ -2,7 +2,7 @@
 //
 // exosite.cpp - Prototypes for the Exosite Cloud API
 //
-// Copyright (c) 2012-2016 Exosite LLC.  All rights reserved.
+// Copyright (c) 2012-2017 Exosite LLC.  All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -93,17 +93,9 @@ boolean Exosite::writeRead(const char* writeString, const char* readString, char
   if (!client->connected()) {
     Serial.print("No Existing Connection, Opening One...");
     client->stop();
-/*
-
-#ifdef SL_DRIVER_VERSION
-    client->sslConnect(serverName,443);
-#else /*CC3200*/
-
-client->connect(serverName,80);
-/*
 
     client->connect(serverName,80);
-#endif /*CC3200*/
+
   }
 
   if (client->connected()) {
@@ -352,19 +344,8 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
     Serial.print("No Existing Connection, Opening One...");
     client->stop();
 
-
-/*
-
-#ifdef SL_DRIVER_VERSION
-    client->sslConnect(serverName,443);
-#else /*CC3200*/
-
-client->connect(serverName,80);
-
-/*
-
     client->connect(serverName,80);
-#endif /*CC3200*/
+
   }
 
   if (client->connected()) {
@@ -453,6 +434,7 @@ client->connect(serverName,80);
 #ifdef EXOSITEDEBUG
         Serial.println(F("HTTP Response Timeout"));
 #endif
+Serial.println("BRUH");
         client->stop();
       }
 
