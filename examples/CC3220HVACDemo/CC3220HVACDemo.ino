@@ -27,7 +27,7 @@
 
 #include <SPI.h>
 #include <WiFi.h>
-#include "Exosite-cc3200.h"
+#include "Exosite.h"
 #include <Adafruit_TMP006.h>
 #include <stdio.h>
 
