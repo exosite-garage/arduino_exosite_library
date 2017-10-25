@@ -1,8 +1,8 @@
 //*****************************************************************************
 //
-// CC3200 HVAC Demo - Demo showing how to use the CC3200 with Exosite's Murano.
+// CC3220 HVAC Demo - Demo showing how to use the CC3220 with Exosite's Murano.
 //
-// Copyright (c) 2013-2016 Exosite LLC.  All rights reserved.
+// Copyright (c) 2013-2017  Exosite LLC.  All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -36,16 +36,18 @@
 *
 * Change these variables to your own settings.
 *=============================================================================*/
-char ssid[] = ""; // <-- Fill in your network SSID (name)
-char pass[] = ""; // <-- Fill in your network password
-#define productID "" // <-- Fill in your product.id
+char ssid[] = "<ssid>"; // <-- Fill in your network SSID (name)
+char pass[] = "<password>"; // <-- Fill in your network password
+#define productID "<ProductID>" // <-- Fill in your product.id
 #define savedCIK "" // <-- Fill in your CIK
+
+unsigned char reprovisionAfter = 3; // Number of Errors before reprovision attempt
+
 /*==============================================================================
 * End of Configuration Variables
 *=============================================================================*/
 
-
-unsigned char errorCount = 0;  // Force Provision On First Loop
+unsigned char errorCount = reprovisionAfter;  // Force Provision On First Loop
 char macString[18];  // Used to store a formatted version of the MAC Address
 byte macData[WL_MAC_ADDR_LENGTH];
 
@@ -121,11 +123,41 @@ void setup(){
 }
 
 /*==============================================================================
+* stringConvert
+*
+* Convert type double to type string in Energia.
+*==============================================================================*/
+String stringConvert(const double val){
+  String valStr = String(int(val*100));
+  String frntTmp;
+  String bckTmp;
+  for (int i = 0;i < valStr.length();i++) {
+    if(i < valStr.length() - 2) {
+      frntTmp += valStr[i];
+     }else{
+      bckTmp += valStr[i];
+     }
+   }
+   return frntTmp + "." + bckTmp;
+}
+
+/*==============================================================================
 * loop
 *
 * Arduino loop function.
 *=============================================================================*/
 void loop(){
+  // Check if we should reprovision.
+  if(errorCount >= reprovisionAfter){
+    
+    // This will return an error if the device is already provisioned.
+    if(exosite.provision(productID, productID, macString)){
+      errorCount = 0;
+    } else {
+      Serial.println("Device Provisioned");
+    }
+  }
+  
   tmp006.wake();
 
   //Grab temperature measurements and print them.
@@ -136,9 +168,8 @@ void loop(){
   String returnString;
 
   //ceate/update Write String
-  String ws = "temperature=";
-  ws.concat(diet);
-
+  //Note: Implicit casting to string from double not allowed in Energia
+  String ws = "temperature=" + stringConvert(diet);
 
   //write value to Exosite
   if (exosite.writeRead(ws, String(""), returnString)){

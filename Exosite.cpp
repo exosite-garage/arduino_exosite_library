@@ -55,11 +55,11 @@ Exosite::Exosite(const String _cik, Client *_client)
 /*==============================================================================
 * begin
 *
-* cik must be fetched after initialization on ESP8266 or CC3200
+* cik must be fetched after initialization on ESP8266, CC3200, or CC3220
 *=============================================================================*/
 #if defined(ESP8266) || defined(SL_DRIVER_VERSION)
 void Exosite::begin(){
-  //fetchNVCIK();
+  fetchNVCIK();
 }
 #endif
 
@@ -345,6 +345,7 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
     client->stop();
 
     client->connect(serverName,80);
+      Serial.print(serverName);
 
   }
 
@@ -397,7 +398,7 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
 
             if(strlen(varPtr) == 40){
               strncpy(cik, varPtr, 41);
-              //saveNVCIK();
+              saveNVCIK();
               ret = true;
             }else{
               Serial.print(F("CRITICAL: Got 200 Response, Wasn't a Valid CIK"));
@@ -431,13 +432,13 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
 
 
       if(timeout_time <= time_now){
+          
 #ifdef EXOSITEDEBUG
         Serial.println(F("HTTP Response Timeout"));
 #endif
         client->stop();
       }
-
-
+      
     if(stringPos >= 199){
       Serial.println(F("Received too Much Content, Failing"));
 
@@ -477,47 +478,64 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
 *
 * Write the CIK to EEPROM
 *=============================================================================*/
-                                                                                                /*
+
 #ifdef SL_DRIVER_VERSION
 #define CIK_LENGTH 40
 #define CIK_FILENAME "exosite_cik.txt"
 
+
 boolean Exosite::saveNVCIK()
 {
     int iRetVal;
-    long lFileHandle;
+    long iFileHandle;
     unsigned long ulToken;
 
     //
     // open the cik file for writing
     //
-    iRetVal = sl_FsOpen((unsigned char *) CIK_FILENAME,
+    
+    // Not yet implemented for cc32003
+    /*if (SL_DRIVER_VERSION == "cc3200 driver"){ //need to find
+        iRetVal = sl_FsOpen((unsigned char *) CIK_FILENAME,
                         FS_MODE_OPEN_CREATE(CIK_LENGTH, _FS_FILE_OPEN_FLAG_COMMIT|_FS_FILE_PUBLIC_WRITE|_FS_FILE_PUBLIC_READ),
                         &ulToken,
-                        &lFileHandle);
-    if(iRetVal < 0)
+                        &iFileHandle);
+    }else */
+    if(SL_DRIVER_VERSION == "2.0.1.21"){
+        iFileHandle = sl_FsOpen((unsigned char *) CIK_FILENAME,
+                        SL_FS_CREATE|SL_FS_CREATE_SECURE|SL_FS_CREATE_NOSIGNATURE | SL_FS_CREATE_MAX_SIZE(CIK_LENGTH)|
+                        SL_FS_CREATE_PUBLIC_WRITE|SL_FS_CREATE_PUBLIC_READ|SL_FS_OVERWRITE,
+                        &ulToken);
+    }
+
+    if(iFileHandle < 0)
     {
-        iRetVal = sl_FsClose(lFileHandle, 0, 0, 0);
+        iRetVal = sl_FsClose(iFileHandle, 0, 0, 0);
         return false;
     }
 
     //
     // write the cik to file
     //
-    iRetVal = sl_FsWrite(lFileHandle,
+    iRetVal = sl_FsWrite(iFileHandle,
                          (unsigned int)0,
                          (unsigned char *)cik,
                          CIK_LENGTH);
-    if (iRetVal < 0)
+    if (iRetVal <= 0)
     {
-        iRetVal = sl_FsClose(lFileHandle, 0, 0, 0);
+        iRetVal = sl_FsClose(iFileHandle, 0, 0, 0);
         return false;
     }
 
     //
     // close the cik file
     //
-    iRetVal = sl_FsClose(lFileHandle, 0, 0, 0);
+    iRetVal = sl_FsClose(iFileHandle, 0, 0, 0);
+    if (SL_RET_CODE_OK != iRetVal)
+    {
+        return false;
+    }
+
     return true;
 }
 
@@ -537,9 +555,12 @@ boolean Exosite::saveNVCIK(){
 *
 * Fetch the CIK from EEPROM
 *=============================================================================*/
-                                                                                                /*
+
 
 #ifdef SL_DRIVER_VERSION
+#define CIK_LENGTH 40
+#define CIK_FILENAME "exosite_cik.txt"
+
 boolean Exosite::fetchNVCIK()
 {
     unsigned long ulToken;
@@ -550,11 +571,21 @@ boolean Exosite::fetchNVCIK()
     //
     // open a the cik file for reading
     //
-    lRetVal = sl_FsOpen((unsigned char *) CIK_FILENAME,
+    
+    // not yet implemented for cc3200
+    /*if (SL_DRIVER_VERSION == "cc3200 driver"){ //need to find
+        lRetVal = sl_FsOpen((unsigned char *) CIK_FILENAME,
                         FS_MODE_OPEN_READ,
                         &ulToken,
                         &lFileHandle);
-    if(lRetVal < 0)
+    }else  */
+    if(SL_DRIVER_VERSION == "2.0.1.21"){
+    lFileHandle = sl_FsOpen((unsigned char *) CIK_FILENAME,
+                        SL_FS_READ,
+                        &ulToken);
+    }
+
+    if(lFileHandle < 0)
     {
         lRetVal = sl_FsClose(lFileHandle, 0, 0, 0);
         return false;
@@ -567,6 +598,7 @@ boolean Exosite::fetchNVCIK()
                 (unsigned int)0,
                 (unsigned char *) read_buffer,
                  CIK_LENGTH);
+
     if ((lRetVal < 0) || (lRetVal != CIK_LENGTH))
     {
         lRetVal = sl_FsClose(lFileHandle, 0, 0, 0);
@@ -584,6 +616,7 @@ boolean Exosite::fetchNVCIK()
 
     read_buffer[40] = 0;
     strcpy(cik, read_buffer);
+    
     return true;
 }
 #else
