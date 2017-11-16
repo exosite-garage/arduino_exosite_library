@@ -94,6 +94,8 @@ boolean Exosite::writeRead(const char* writeString, const char* readString, char
     client->stop();
   #ifdef SL_DRIVER_VERSION
     client->sslConnect(serverName,443);
+  #if defined(ESP8266)
+      client->sslConnect(serverName,443);3
   #else /*CC3200*/
     client->connect(serverName,80);
   #endif /*CC3200*/
@@ -962,6 +964,8 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
                           strlen(snParameter) + 
                           1;
   char *writeString = (char*)malloc(sizeof(char) * (writeStringLen));
+  
+  Serial.print(F("HELLO YOU ARE HERE NOW"))
 
   // Assemble Parameter String
   varPtr = writeString;
@@ -982,7 +986,7 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
   if (!client->connected()) {
     Serial.print("No Existing Connection, Opening One...");
     client->stop();
-    client->connect(serverName,80);
+    client->connect(serverName,443);
   }
 
   if (client->connected()) {
