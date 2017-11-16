@@ -28,12 +28,12 @@
 #ifndef Exosite_h
 #define Exosite_h
 
-#define ACTIVATOR_VERSION   "2.5.3"
+#define ACTIVATOR_VERSION   "2.6.1"
 
 // Select a Debug Level: 
 //#define EXOSITEDEBUG 1
 //#define EXOSITEDEBUG 2
-#define EXOSITEDEBUG 3
+//#define EXOSITEDEBUG 3
 
 // Enable or Disable Direct from ROM Sending
 // Disabled on ESP because of performance issue and lack of need.

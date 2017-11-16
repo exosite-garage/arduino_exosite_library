@@ -41,7 +41,7 @@
  * WIFI Configuration Variables - Change these variables to your own settings.
  *=============================================================================*/
 const char ssid[]     = "<YOUR_SSID_HERE>";
-const char password[] = "<YOUR_WIFI_PASSWORD_HERE";
+const char password[] = "<YOUR_WIFI_PASSWORD_HERE>";
 
 /*==============================================================================
  * EXOSITE MURANO Configuration Variables - Change these variables to your own settings.
