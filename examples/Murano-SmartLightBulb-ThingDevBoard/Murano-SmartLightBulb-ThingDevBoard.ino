@@ -72,7 +72,7 @@ int comm_errors = 0;
 int s = 0;
 bool initial = true;
 
-WiFiClient client;
+WiFiClientSecure client;
 Exosite exosite(&client);
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -85,7 +85,7 @@ void setup() {
   Serial.begin(112500);
   EEPROM.begin(40);
   exosite.begin();
-  exosite.setDomain(productId".devmode-m2.exosite.io");
+  exosite.setDomain(productId".m2.exosite.io");
 
   //SET UP IO PINS
   pinMode(LED_PIN, OUTPUT);
