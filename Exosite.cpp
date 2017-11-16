@@ -95,7 +95,7 @@ boolean Exosite::writeRead(const char* writeString, const char* readString, char
   #ifdef SL_DRIVER_VERSION
     client->sslConnect(serverName,443);
   #if defined(ESP8266)
-      client->sslConnect(serverName,443);
+      client->connect(serverName,443);
   #else /*CC3200*/
     client->connect(serverName,80);
   #endif /*CC3200*/
@@ -541,7 +541,7 @@ boolean Exosite::longPoll(const int timeoutRequest, const char* readString, char
     Serial.print("No Existing Connection, Opening One...");
     client->stop();
   #ifdef SL_DRIVER_VERSION
-    client->connect(serverName,443);
+    client->sslCconnect(serverName,443);
   #else /*CC3200*/  
     client->connect(serverName,80);
   #endif /*CC3200*/
