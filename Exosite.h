@@ -27,12 +27,14 @@
 
 #ifndef Exosite_h
 #define Exosite_h
+#ifndef ESP8266
 #include <Arduino.h>
 #include <WiFi.h>
+#endif
 
-#define ACTIVATOR_VERSION   "2.6.0"
+#define ACTIVATOR_VERSION   "2.6.1"
 
-// Select a Debug Level:
+// Select a Debug Level: 
 //#define EXOSITEDEBUG 1
 //#define EXOSITEDEBUG 2
 //#define EXOSITEDEBUG 3
@@ -83,6 +85,7 @@ class Exosite
     boolean DataRx;
     boolean RxLoop;
     char c;
+    unsigned long longPollTimeoutRequest;
     unsigned long timeout_time;
     unsigned long time_now;
     unsigned long timeout;
@@ -108,17 +111,35 @@ class Exosite
     boolean writeRead(const char* writeString,const char* readString, char** returnString);
     boolean writeRead(const String &writeString, const String &readString, String &returnString);
 
+    boolean read(const char* readString, char** returnString);
+    boolean read(const String &readString, String &returnString);
+
+    boolean longPoll(const int timeoutRequest, const char* readString, char** returnString, const char* currentTimestamp);
+    boolean longPoll(const int timeoutRequest, const String &readString, String &returnString, const String = "");
+
+    boolean write(const char* writeString);
+    boolean write(const String &writeString);
+
     boolean provision(const char* vendorString, const char* modelString, const char* snString);
+
+    boolean listAvailableContent(const char* vendorString, const char* modelString, char** returnString);
+    boolean listAvailableContent(const String &vendorString, const String &modelString, String &returnString);
+
+    boolean getContentInfo(const char* vendorString, const char* modelString, const char* idString, char** returnString);
+    boolean getContentInfo(const String &vendorString, const String &modelString, const String &idString, String &returnString);
+
+    boolean downloadContent(const char* vendorString, const char* modelString, const char* idString, char** returnString, const char* byteRange);
+    boolean downloadContent(const String &vendorString, const String &modelString, const String &idString, String &returnString,  const String = "");
 
     boolean saveNVCIK();
     boolean fetchNVCIK();
 
+    unsigned long timestamp();
     unsigned long time();
-
+    
     // Depreciated Methods
     int sendToCloud(String res, int value);
     int readFromCloud(String res ,String* pResult);
-
 };
 
 #endif
