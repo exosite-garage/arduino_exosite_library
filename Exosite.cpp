@@ -65,8 +65,9 @@ void Exosite::begin(){
 *
 * set a custom domain to contact
 *=============================================================================*/
-void Exosite::setDomain(const char *domain){
+void Exosite::setDomain(const char *domain, int port){
   serverName = domain;
+  serverPort = port;
 }
 
 
@@ -93,9 +94,9 @@ boolean Exosite::writeRead(const char* writeString, const char* readString, char
     Serial.print("No Existing Connection, Opening One...");
     client->stop();
   #ifdef SL_DRIVER_VERSION
-    client->sslConnect(serverName,443);
+    client->sslConnect(serverName,serverPort);
   #else /*CC3200*/
-    client->connect(serverName,80);
+    client->connect(serverName,serverPort);
   #endif /*CC3200*/
   }
 
@@ -320,9 +321,9 @@ boolean Exosite::read(const char* readString, char** returnString){
     Serial.print("No Existing Connection, Opening One...");
     client->stop();
   #ifdef SL_DRIVER_VERSION
-    client->sslConnect(serverName,443);
+    client->sslConnect(serverName,serverPort);
   #else /*CC3200*/
-    client->connect(serverName,80);
+    client->connect(serverName,serverPort);
   #endif /*CC3200*/
   }
 
@@ -539,9 +540,9 @@ boolean Exosite::longPoll(const int timeoutRequest, const char* readString, char
     Serial.print("No Existing Connection, Opening One...");
     client->stop();
   #ifdef SL_DRIVER_VERSION
-    client->sslConnect(serverName,443);
-  #else /*CC3200*/  
-    client->connect(serverName,80);
+    client->sslConnect(serverName,serverPort);
+  #else /*CC3200*/
+    client->connect(serverName,serverPort);
   #endif /*CC3200*/
   }
 
@@ -772,9 +773,9 @@ boolean Exosite::write(const char* writeString){
     Serial.print("No Existing Connection, Opening One...");
     client->stop();
   #ifdef SL_DRIVER_VERSION
-    client->sslConnect(serverName,443);
+    client->sslConnect(serverName,serverPort);
   #else /*CC3200*/
-    client->connect(serverName,80);
+    client->connect(serverName,serverPort);
   #endif /*CC3200*/
   }
 
@@ -982,7 +983,11 @@ boolean Exosite::provision(const char* vendorString, const char* modelString, co
   if (!client->connected()) {
     Serial.print("No Existing Connection, Opening One...");
     client->stop();
-    client->connect(serverName,80);
+  #ifdef SL_DRIVER_VERSION
+    client->sslConnect(serverName,serverPort);
+  #else /*CC3200*/
+    client->connect(serverName,serverPort);
+  #endif /*CC3200*/
   }
 
   if (client->connected()) {
@@ -1126,7 +1131,11 @@ boolean Exosite::listAvailableContent(const char* vendorString, const char* mode
   if (!client->connected()) {
     Serial.print("No Existing Connection, Opening One...");
     client->stop();
-    client->connect(serverName,80);
+  #ifdef SL_DRIVER_VERSION
+    client->sslConnect(serverName,serverPort);
+  #else /*CC3200*/
+    client->connect(serverName,serverPort);
+  #endif /*CC3200*/
   }
 
   if (client->connected()) {
@@ -1332,7 +1341,11 @@ boolean Exosite::getContentInfo(const char* vendorString, const char* modelStrin
   if (!client->connected()) {
     Serial.print("No Existing Connection, Opening One...");
     client->stop();
-    client->connect(serverName,80);
+  #ifdef SL_DRIVER_VERSION
+    client->sslConnect(serverName,serverPort);
+  #else /*CC3200*/
+    client->connect(serverName,serverPort);
+  #endif /*CC3200*/
   }
 
   if (client->connected()) {
@@ -1544,7 +1557,11 @@ boolean Exosite::downloadContent(const char* vendorString, const char* modelStri
   if (!client->connected()) {
     Serial.print("No Existing Connection, Opening One...");
     client->stop();
-    client->connect(serverName,80);
+  #ifdef SL_DRIVER_VERSION
+    client->sslConnect(serverName,serverPort);
+  #else /*CC3200*/
+    client->connect(serverName,serverPort);
+  #endif /*CC3200*/
   }
 
   if (client->connected()) {
@@ -1793,7 +1810,11 @@ unsigned long Exosite::timestamp(){
   if (!client->connected()) {
     Serial.print("No Existing Connection, Opening One...");
     client->stop();
-    client->connect(serverName,80);
+  #ifdef SL_DRIVER_VERSION
+    client->sslConnect(serverName,serverPort);
+  #else /*CC3200*/
+    client->connect(serverName,serverPort);
+  #endif /*CC3200*/
   }
 
   if (client->connected()) {

@@ -67,6 +67,7 @@ class Exosite
     class Client* client;
     char cik[41];
     const char *serverName = "m2.exosite.io";
+    int serverPort = 80;
     char rxdata[200];
     char aliasList[50];
     char* varPtr;
@@ -96,8 +97,12 @@ class Exosite
     #endif
 
     // Current Methods
-
-    void setDomain(const char *domain);
+  #ifdef SL_DRIVER_VERSION
+    void setDomain(const char *domain, int port=443);
+  #else /*CC3200*/
+    void setDomain(const char *domain, int port=80);
+  #endif /*CC3200*/
+    
 
     boolean writeRead(const char* writeString,const char* readString, char** returnString);
     boolean writeRead(const String &writeString, const String &readString, String &returnString);
